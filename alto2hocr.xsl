@@ -92,6 +92,9 @@ License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0
  <xsl:template match="String">
     <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
         <xsl:value-of select="@CONTENT"/>
+        <xsl:if test="local-name(following-sibling::*[1]) = 'HYP'">
+            <xsl:text>-</xsl:text>
+        </xsl:if>
      </span>
   </xsl:template>
 
