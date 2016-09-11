@@ -12,9 +12,9 @@ License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0
     xmlns:mf="http://myfunctions" 
     exclude-result-prefixes="mf">
 
-  <xsl:output method="xml" encoding="utf-8" indent="no" />
+  <xsl:output method="xml" encoding="utf-8" indent="yes" />
   <xsl:strip-space elements="*"/>
-  <xsl:param name="language" />
+  <xsl:param name="language" select="'unknown'"/>
 
   <xsl:template match="/">
         <alto xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v2# http://www.loc.gov/standards/alto/v2/alto-2-0.xsd">
@@ -68,7 +68,12 @@ License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0
  
   <xsl:template match="*:p[@class='ocr_par']">
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
-      <TextBlock ID="{@id}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" language="{$language}">
+      <TextBlock ID="{@id}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}">
+          <xsl:if test="$language != 'unknown'">
+              <xsl:attribute name="LANG">
+                  <xsl:value-of select="$language"/>
+              </xsl:attribute>
+          </xsl:if>
       
           <xsl:apply-templates select="*:span[@class='ocr_line']"/>
       
