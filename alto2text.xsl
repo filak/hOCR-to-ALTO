@@ -1,7 +1,7 @@
 <?xml version="1.1" encoding="UTF-8"?>
 <!--
 Author:  konstantin baierer
-License: Creative Commons Attribution 4.0 International.(CC BY 4.0)
+License: MIT
 -->
 <xsl:stylesheet version="2.0" 
     xmlns="http://www.loc.gov/standards/alto/ns-v2#" 
