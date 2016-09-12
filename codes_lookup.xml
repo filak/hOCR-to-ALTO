@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<codes>
+  <code a2="cs" a3="ces" lang="Czech"/>
+  <code a2="en" a3="eng" lang="English"/>
+  <code a2="fr" a3="fra" lang="French"/>
+  <code a2="de" a3="deu" lang="German"/>
+  <code a2="la" a3="lat" lang="Latin"/>
+  <code a2="pl" a3="pol" lang="Polish"/>
+  <code a2="ru" a3="rus" lang="Russian"/>
+  <code a2="sk" a3="slk" lang="Slovak"/>
+</codes>
