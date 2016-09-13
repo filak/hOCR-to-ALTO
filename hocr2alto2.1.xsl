@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Author:  Filip Kriz
-Version: 1.3   12-9-2016
+Version: 1.3.1   13-9-2016
 License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0)
 -->
 <xsl:stylesheet version="2.0" 
@@ -15,7 +15,7 @@ License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0
 
   <xsl:output method="xml" encoding="utf-8" indent="no" />
   <xsl:strip-space elements="*"/>
-  <!--   2-letters code for default language -->
+  <!--   Optional:  ISO 639-2/B 3-letter code for default language -->
   <xsl:param name="language" select="unknown" />
   <xsl:variable name="langcodes" select="document('codes_lookup.xml')/*:codes/*:code" />
 
@@ -78,7 +78,7 @@ License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0
               <xsl:when test="@lang != ''">
                   <xsl:variable name="lookup" select="@lang" />
                   <xsl:attribute name="LANG">
-                      <xsl:value-of select="$langcodes[@a3=$lookup]/@a2" />
+                      <xsl:value-of select="$langcodes[@a3h=$lookup]/@a3b" />
                   </xsl:attribute>
               </xsl:when>
 
@@ -113,7 +113,7 @@ License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0
              <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="bold"/>
           </xsl:when>
           <xsl:when test="*:em">
-             <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="bold"/>
+             <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="italics"/>
           </xsl:when>
           <xsl:when test="*:i">
              <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="italics"/>
