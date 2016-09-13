@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Author:  Filip Kriz
+Author:  Filip Kriz (@filak)
 Version: 1.3.1   13-9-2016
-License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0)
+License: MIT License (MIT)
 -->
 <xsl:stylesheet version="2.0" 
     xmlns="http://www.loc.gov/standards/alto/ns-v2#" 
