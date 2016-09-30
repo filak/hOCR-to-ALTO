@@ -13,7 +13,7 @@ License: MIT License (MIT)
     exclude-result-prefixes="#all">
 
   <xsl:output method="xml" encoding="utf-8" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" 
-  doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" indent="yes" />
+  doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" indent="no" />
   <xsl:strip-space elements="*"/>
   <!--   Optional:  ISO 639-2/B 3-letter code for default language -->
   <xsl:param name="language" select="unknown"/>

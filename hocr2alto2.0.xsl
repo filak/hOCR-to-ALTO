@@ -13,7 +13,7 @@ License: MIT License (MIT)
     xpath-default-namespace="*" 
     exclude-result-prefixes="mf">
 
-  <xsl:output method="xml" encoding="utf-8" indent="yes" />
+  <xsl:output method="xml" encoding="utf-8" indent="no" />
   <xsl:strip-space elements="*"/>
   <!--   Optional:  ISO 639-2/B 3-letter code for default language -->
   <xsl:param name="language" select="unknown" />
