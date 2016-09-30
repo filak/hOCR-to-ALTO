@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Author:  Filip Kriz
-Version: 1.0 25-11-2015
-License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0)
+Author:  Filip Kriz (@filak)
+Version: 1.3.1   13-9-2016
+License: MIT License (MIT)
 -->
 <xsl:stylesheet version="2.0"
     xmlns="http://www.w3.org/1999/xhtml"
@@ -15,10 +15,15 @@ License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0
   <xsl:output method="xml" encoding="utf-8" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" 
   doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" indent="yes" />
   <xsl:strip-space elements="*"/>
-  <xsl:param name="language" />
-
+  <!--   Optional:  ISO 639-2/B 3-letter code for default language -->
+  <xsl:param name="language" select="unknown"/>
+  <xsl:variable name="langcodes" select="document('codes_lookup.xml')/*:codes/*:code" />
+  
   <xsl:template match="/">
-        <html xml:lang="{$language}" lang="{$language}">
+
+      <xsl:variable name="headlang" select="$langcodes[@a3b=$language]/@a2" />
+  
+        <html xml:lang="{$headlang}" lang="{$headlang}">
             <xsl:apply-templates/>
         </html>
   </xsl:template>
@@ -76,7 +81,28 @@ License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0
 
 
  <xsl:template match="TextBlock">
-    <p class="ocr_par" dir="ltr" id="{mf:getId(@ID,'par',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}" lang="{@language}{@LANG}">
+    <p class="ocr_par" dir="ltr" id="{mf:getId(@ID,'par',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
+
+        <xsl:variable name="lookup" select="@language|@LANG" />
+         <xsl:variable name="lang" select="$langcodes[@a3b=$lookup]/@a3h" />
+                  
+          <xsl:choose>
+          
+              <xsl:when test="$lang != ''">
+                  <xsl:attribute name="lang">
+                      <xsl:value-of select="$lang" />
+                  </xsl:attribute>
+              </xsl:when>
+
+              <xsl:when test="$language != 'unknown'">
+                  <xsl:attribute name="lang">
+                      <xsl:value-of select="$langcodes[@a3b=$language]/@a3h" />
+                  </xsl:attribute>
+              </xsl:when>
+
+          </xsl:choose>
+
+    
         <xsl:apply-templates select="TextLine"/>
      </p>
   </xsl:template>
@@ -92,9 +118,11 @@ License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0
  <xsl:template match="String">
     <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
         <xsl:value-of select="@CONTENT"/>
+        <xsl:if test="local-name(following-sibling::*[1]) = 'HYP'">
+             <xsl:text>-</xsl:text>
+         </xsl:if>
      </span>
   </xsl:template>
-
   
 
 <xsl:function name="mf:getBox">

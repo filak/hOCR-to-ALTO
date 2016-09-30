@@ -6,6 +6,8 @@ interface to using these stylesheets.
 
 ## LICENSE
 
+codes_lookup.xml - file generated with https://github.com/filak/iso-language-codes
+
 ### CC-BY-SA 4.0
 
 * [`./alto2hocr.xsl`](./alto2hocr.xsl) by Filip Kriz (@filak)

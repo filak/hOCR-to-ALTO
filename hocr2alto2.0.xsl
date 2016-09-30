@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Author:  Filip Kriz
-Version: 1.0 25-11-2015
-License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0)
+Author:  Filip Kriz (@filak)
+Version: 1.3.1   13-9-2016
+License: MIT License (MIT)
 -->
 <xsl:stylesheet version="2.0" 
     xmlns="http://www.loc.gov/standards/alto/ns-v2#" 
@@ -10,23 +10,26 @@ License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:mf="http://myfunctions" 
+    xpath-default-namespace="*" 
     exclude-result-prefixes="mf">
 
   <xsl:output method="xml" encoding="utf-8" indent="yes" />
   <xsl:strip-space elements="*"/>
-  <xsl:param name="language" select="'unknown'"/>
+  <!--   Optional:  ISO 639-2/B 3-letter code for default language -->
+  <xsl:param name="language" select="unknown" />
+  <xsl:variable name="langcodes" select="document('codes_lookup.xml')/*:codes/*:code" />
 
   <xsl:template match="/">
         <alto xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v2# http://www.loc.gov/standards/alto/v2/alto-2-0.xsd">
             <xsl:apply-templates/>
         </alto>
   </xsl:template>
- 
+
   <xsl:template match="*:head">
         <Description>
             <MeasurementUnit>pixel</MeasurementUnit>
             <sourceImageInformation>
-                  <xsl:variable name="title" select="//body/*:div[@class='ocr_page']/@title"/>
+                  <xsl:variable name="title" select="//*:body/*:div[@class='ocr_page']/@title"/>
                   <fileName><xsl:value-of select="mf:getFname($title)"/></fileName>
             </sourceImageInformation>
             <OCRProcessing ID="IdOcr">
@@ -69,11 +72,23 @@ License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0
   <xsl:template match="*:p[@class='ocr_par']">
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
       <TextBlock ID="{@id}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}">
-          <xsl:if test="$language != 'unknown'">
-              <xsl:attribute name="LANG">
-                  <xsl:value-of select="$language"/>
-              </xsl:attribute>
-          </xsl:if>
+          
+          <xsl:choose>
+          
+              <xsl:when test="@lang != ''">
+                  <xsl:variable name="lookup" select="@lang" />
+                  <xsl:attribute name="language">
+                      <xsl:value-of select="$langcodes[@a3h=$lookup]/@a3b" />
+                  </xsl:attribute>
+              </xsl:when>
+
+              <xsl:when test="$language != 'unknown'">
+                  <xsl:attribute name="language">
+                      <xsl:value-of select="$language"/>
+                  </xsl:attribute>
+              </xsl:when>
+
+          </xsl:choose>
       
           <xsl:apply-templates select="*:span[@class='ocr_line']"/>
       
@@ -94,13 +109,13 @@ License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0
   <xsl:template match="*:span[@class='ocrx_word']">
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
         <xsl:choose>
-          <xsl:when test="strong">
+          <xsl:when test="*:strong">
              <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="bold"/>
           </xsl:when>
-          <xsl:when test="em">
-             <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="bold"/>
+          <xsl:when test="*:em">
+             <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="italics"/>
           </xsl:when>
-          <xsl:when test="i">
+          <xsl:when test="*:i">
              <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="italics"/>
           </xsl:when>
           <xsl:otherwise>
@@ -126,5 +141,6 @@ License: Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA 4.0
     <xsl:param name="titleString"/>
     <xsl:value-of select="tokenize(normalize-space($titleString),'; ')"/>
 </xsl:function>
-  
-</xsl:stylesheet>
+
+
+  </xsl:stylesheet>
