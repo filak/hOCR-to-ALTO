@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Author:  Filip Kriz (@filak)
-Version: 1.3.1   13-9-2016
+Version: 1.3.2   7-2-2017
 License: MIT License (MIT)
 -->
 <xsl:stylesheet version="2.0"
@@ -16,7 +16,7 @@ License: MIT License (MIT)
   doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" indent="no" />
   <xsl:strip-space elements="*"/>
   <!--   Optional:  ISO 639-2/B 3-letter code for default language -->
-  <xsl:param name="language" select="unknown"/>
+  <xsl:param name="language" select="'unknown'" />
   <xsl:variable name="langcodes" select="document('codes_lookup.xml')/*:codes/*:code" />
   
   <xsl:template match="/">

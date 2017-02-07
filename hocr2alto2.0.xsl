@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Author:  Filip Kriz (@filak)
-Version: 1.3.1   13-9-2016
+Version: 1.3.2   7-2-2017
 License: MIT License (MIT)
 -->
 <xsl:stylesheet version="2.0" 
@@ -15,8 +15,9 @@ License: MIT License (MIT)
 
   <xsl:output method="xml" encoding="utf-8" indent="no" />
   <xsl:strip-space elements="*"/>
-  <!--   Optional:  ISO 639-2/B 3-letter code for default language -->
-  <xsl:param name="language" select="unknown" />
+  <!--   Optional - default language:   ISO 639-2/B 3-letter code (language) OR  Tesseract code (teslang)   -->
+  <xsl:param name="language" select="'unknown'" />
+  <xsl:param name="teslang" select="'notset'" />
   <xsl:variable name="langcodes" select="document('codes_lookup.xml')/*:codes/*:code" />
 
   <xsl:template match="/">
@@ -84,7 +85,13 @@ License: MIT License (MIT)
 
               <xsl:when test="$language != 'unknown'">
                   <xsl:attribute name="language">
-                      <xsl:value-of select="$language"/>
+                      <xsl:value-of select="$language" />
+                  </xsl:attribute>
+              </xsl:when>
+
+              <xsl:when test="$teslang != 'notset'">
+                  <xsl:attribute name="language">
+                      <xsl:value-of select="$langcodes[@a3h=$teslang]/@a3b" />
                   </xsl:attribute>
               </xsl:when>
 

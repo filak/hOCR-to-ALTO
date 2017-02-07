@@ -5,8 +5,7 @@ License: MIT
 -->
 <xsl:stylesheet version="2.0" 
     xmlns="http://www.loc.gov/standards/alto/ns-v2#" 
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-    >
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:output method="text" encoding="utf-8" indent="no" />
   <xsl:strip-space elements="*"/>
@@ -19,7 +18,6 @@ License: MIT
           <xsl:value-of select="$sgr"/>
       </xsl:if>
   </xsl:template>
-
 
   <xsl:template match="/">
       <xsl:apply-templates select="//*[local-name()='Page']"/>
@@ -52,7 +50,7 @@ License: MIT
       <!--         <xsl:call-template name='ansi'><xsl:with-param name='sgr'>3m</xsl:with-param></xsl:call-template> -->
       <!--     </xsl:when> -->
       <!-- </xsl:choose> -->
-      <xsl:value-of select="@CONTENT"/>
+      <xsl:value-of select="@CONTENT"/><xsl:text>&#x20;</xsl:text>
       <xsl:call-template name='ansi'><xsl:with-param name='sgr'>0m</xsl:with-param></xsl:call-template>
   </xsl:template>
 
