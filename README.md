@@ -19,7 +19,7 @@ interface to using these stylesheets.
     * Convert ALTO 2.0 / ALTO 2.1 to plain text
   * [`./alto2text.xsl`](./alto2text.xsl)
     * Convert hOCR to plain text
-  * [`codes_lookup.xml`]('./codes_lookup.xml)
+  * [`codes_lookup.xml`](./codes_lookup.xml)
     * ISO language codes
     * file generated with https://github.com/filak/iso-language-codes
 
