@@ -10,6 +10,7 @@ License: MIT License (MIT)
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:mf="http://myfunctions" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xpath-default-namespace="*" 
     exclude-result-prefixes="mf">
 
@@ -30,7 +31,7 @@ License: MIT License (MIT)
         <Description>
             <MeasurementUnit>pixel</MeasurementUnit>
             <sourceImageInformation>
-                  <xsl:variable name="title" select="//*:body/*:div[@class='ocr_page']/@title"/>
+                  <xsl:variable name="title" select="//*:body/*:div[@class='ocr_page'][1]/@title"/>
                   <fileName><xsl:value-of select="mf:getFname($title)"/></fileName>
             </sourceImageInformation>
             <OCRProcessing ID="IdOcr">
@@ -45,18 +46,21 @@ License: MIT License (MIT)
   </xsl:template>
   
 
-  <xsl:template match="*:body/*:div[@class='ocr_page']">
+  <xsl:template match="*:body[*:div[@class='ocr_page']]">
         <Layout>
+            <xsl:apply-templates select="*:div[@class='ocr_page']"/>
+        </Layout>
+  </xsl:template>
+  <xsl:template match="*:div[@class='ocr_page']">
         <!--  bbox 552 999 1724 1141 x1-L2-T3-R4-B5 -->
         <xsl:variable name="box" select="tokenize(mf:getBoxPage(@title), ' ')"/>
-            <Page ID="{@id}" PHYSICAL_IMG_NR="1" HEIGHT="{$box[5]}" WIDTH="{$box[4]}">
-                <PrintSpace HEIGHT="{$box[5]}" WIDTH="{$box[4]}" VPOS="0" HPOS="0">
+        <Page ID="{@id}" PHYSICAL_IMG_NR="1" HEIGHT="{$box[5]}" WIDTH="{$box[4]}">
+            <PrintSpace HEIGHT="{$box[5]}" WIDTH="{$box[4]}" VPOS="0" HPOS="0">
 
-                    <xsl:apply-templates select="*:div[@class='ocr_carea']"/>
+                <xsl:apply-templates select="*:div[@class='ocr_carea']"/>
 
-                </PrintSpace>
-            </Page>
-        </Layout>
+            </PrintSpace>
+        </Page>
   </xsl:template>
   
   
@@ -115,30 +119,30 @@ License: MIT License (MIT)
 
   <xsl:template match="*:span[@class='ocrx_word']">
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
+      <xsl:variable name="wc" select="mf:getConfidence(@title)"/>
         <xsl:choose>
           <xsl:when test="*:strong">
-             <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="bold"/>
+             <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" WC="{$wc}" STYLE="bold"/>
           </xsl:when>
           <xsl:when test="*:em">
-             <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="italics"/>
+              <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" WC="{$wc}" STYLE="italics"/>
           </xsl:when>
           <xsl:when test="*:i">
-             <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="italics"/>
+              <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" WC="{$wc}" STYLE="italics"/>
           </xsl:when>
           <xsl:otherwise>
-               <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" />
+              <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" WC="{$wc}" />
           </xsl:otherwise>
         </xsl:choose>
   </xsl:template>
 
- 
 <xsl:function name="mf:getFname">
     <xsl:param name="titleString"/>
     <xsl:variable name="pPat">"</xsl:variable>
-    <xsl:variable name="fpath" select="tokenize(tokenize(normalize-space($titleString),'; ')[1],' ')[2]"/>
+    <xsl:variable name="fpath" select="substring-after(tokenize(normalize-space($titleString),'; ')[1],'image &quot;')"/>
     <xsl:value-of select="reverse(tokenize(replace($fpath,$pPat,''),'\\'))[1]"/>
 </xsl:function>
-  
+
 <xsl:function name="mf:getBoxPage">
     <xsl:param name="titleString"/>
     <xsl:value-of select="tokenize(normalize-space($titleString),'; ')[2]"/>
@@ -149,5 +153,10 @@ License: MIT License (MIT)
     <xsl:value-of select="tokenize(normalize-space($titleString),'; ')"/>
 </xsl:function>
 
+<xsl:function name="mf:getConfidence">
+    <xsl:param name="titleString"/>
+    <xsl:variable name="confString" as="xs:integer" select="replace($titleString, '.* x_wconf (\d+)','$1') cast as xs:integer"/>
+    <xsl:value-of select="$confString div 100"></xsl:value-of>
+</xsl:function>
   
 </xsl:stylesheet>
