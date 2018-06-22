@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Author:  Filip Kriz (@filak)
-Version: 1.3.2   7-2-2017
+Version: 1.3.3   22-06-2018
 License: MIT License (MIT)
 -->
 <xsl:stylesheet version="2.0" 
@@ -83,7 +83,7 @@ License: MIT License (MIT)
               <xsl:when test="@lang != ''">
                   <xsl:variable name="lookup" select="@lang" />
                   <xsl:attribute name="LANG">
-                      <xsl:value-of select="$langcodes[@a3h=$lookup]/@a3b" />
+                      <xsl:value-of select="$langcodes[@a2=$lookup]/@a3b" />
                   </xsl:attribute>
               </xsl:when>
               

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Author:  Filip Kriz (@filak)
-Version: 1.3.2   7-2-2017
+Version: 1.3.3   22-06-2018
 License: MIT License (MIT)
 -->
 <xsl:stylesheet version="2.0"
@@ -84,7 +84,7 @@ License: MIT License (MIT)
     <p class="ocr_par" dir="ltr" id="{mf:getId(@ID,'par',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
 
         <xsl:variable name="lookup" select="@language|@LANG" />
-         <xsl:variable name="lang" select="$langcodes[@a3b=$lookup]/@a3h" />
+         <xsl:variable name="lang" select="$langcodes[@a3b=$lookup]/@a2" />
                   
           <xsl:choose>
           
@@ -96,7 +96,7 @@ License: MIT License (MIT)
 
               <xsl:when test="$language != 'unknown'">
                   <xsl:attribute name="lang">
-                      <xsl:value-of select="$langcodes[@a3b=$language]/@a3h" />
+                      <xsl:value-of select="$langcodes[@a3b=$language]/@a2" />
                   </xsl:attribute>
               </xsl:when>
 
@@ -116,7 +116,12 @@ License: MIT License (MIT)
 
 
  <xsl:template match="String">
-    <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
+ 
+    <xsl:variable name="textstyleid"><xsl:value-of select="@STYLEREFS"/></xsl:variable>
+    <xsl:variable name="fontfamily"><xsl:value-of select="//Styles/TextStyle[@ID=$textstyleid]/@FONTFAMILY" /></xsl:variable>
+    <xsl:variable name="fontsize"><xsl:value-of select="//Styles/TextStyle[@ID=$textstyleid]/@FONTSIZE" /></xsl:variable>
+ 
+    <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}" x_font="{$fontfamily}" x_size="{$fontsize}">
         <xsl:value-of select="@CONTENT"/>
         <xsl:if test="local-name(following-sibling::*[1]) = 'HYP'">
              <xsl:text>-</xsl:text>
