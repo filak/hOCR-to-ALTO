@@ -2,6 +2,8 @@
 <!--
 Author:  konstantin baierer
 License: MIT
+Changes:
+- in template match="*[@class='ocr_line']" / apply-templates select="*" ==> apply-templates select="node()" [fixes OCRopy output parsing]
 -->
 <xsl:stylesheet version="2.0" 
     xmlns="http://www.loc.gov/standards/alto/ns-v2#" 
@@ -29,7 +31,7 @@ License: MIT
   </xsl:template>
 
   <xsl:template match="*[@class='ocr_line']">
-      <xsl:apply-templates select="*"/>
+      <xsl:apply-templates select="node()"/>
       <xsl:text>&#x0a;</xsl:text>
   </xsl:template>
 
