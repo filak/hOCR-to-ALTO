@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Author:  Filip Kriz (@filak)
-Version: 1.3.3   22-06-2018
+Version: 1.3.4   5-12-2018
 License: MIT License (MIT)
 -->
 <xsl:stylesheet version="2.0" 
@@ -15,9 +15,13 @@ License: MIT License (MIT)
 
   <xsl:output method="xml" encoding="utf-8" indent="no" />
   <xsl:strip-space elements="*"/>
-  <!--   Optional - default language:   ISO 639-2/B 3-letter code (language) OR  Tesseract code (teslang)   -->
+  <!-- Optional params:
+       - default language code (param:  language) OR
+       - Tesseract language code (param:  teslang)
+  -->
   <xsl:param name="language" select="'unknown'" />
   <xsl:param name="teslang" select="'notset'" />
+
   <xsl:variable name="langcodes" select="document('codes_lookup.xml')/*:codes/*:code" />
 
   <xsl:template match="/">
@@ -37,7 +41,6 @@ License: MIT License (MIT)
             <ocrProcessingStep>
                 <processingSoftware>
                     <softwareName><xsl:value-of select="*:meta[@name='ocr-system']/@content"/></softwareName>
-                    <softwareVersion><xsl:value-of select="*:meta[@name='ocr-system']/@content"/></softwareVersion>
                 </processingSoftware>
             </ocrProcessingStep>
             </OCRProcessing>
@@ -77,9 +80,8 @@ License: MIT License (MIT)
           <xsl:choose>
           
               <xsl:when test="@lang != ''">
-                  <xsl:variable name="lookup" select="@lang" />
                   <xsl:attribute name="language">
-                      <xsl:value-of select="$langcodes[@a2=$lookup]/@a3b" />
+                      <xsl:value-of select="@lang" />
                   </xsl:attribute>
               </xsl:when>
 
