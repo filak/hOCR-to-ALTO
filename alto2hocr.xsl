@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Author:  Filip Kriz (@filak)
-Version: 1.3.3   22-06-2018
+Version: 1.3.4   5-12-2018
 License: MIT License (MIT)
 -->
 <xsl:stylesheet version="2.0"
@@ -13,19 +13,26 @@ License: MIT License (MIT)
     exclude-result-prefixes="#all">
 
   <xsl:output method="xml" encoding="utf-8" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" 
-  doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" indent="no" />
+  doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" indent="yes" />
   <xsl:strip-space elements="*"/>
-  <!--   Optional:  ISO 639-2/B 3-letter code for default language -->
+  <!-- Default language code - fallback value -->
   <xsl:param name="language" select="'unknown'" />
-  <xsl:variable name="langcodes" select="document('codes_lookup.xml')/*:codes/*:code" />
-  
+
   <xsl:template match="/">
 
-      <xsl:variable name="headlang" select="$langcodes[@a3b=$language]/@a2" />
-  
-        <html xml:lang="{$headlang}" lang="{$headlang}">
-            <xsl:apply-templates/>
+    <xsl:choose>
+      <xsl:when test="$language != 'unknown'">
+        <html xml:lang="{$language}" lang="{$language}">
+          <xsl:apply-templates/>
         </html>
+      </xsl:when>
+      <xsl:otherwise>
+        <html>
+          <xsl:apply-templates/>
+        </html>
+      </xsl:otherwise>
+    </xsl:choose>
+  
   </xsl:template>
   
   <xsl:template match="Description">
@@ -83,8 +90,7 @@ License: MIT License (MIT)
  <xsl:template match="TextBlock">
     <p class="ocr_par" dir="ltr" id="{mf:getId(@ID,'par',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
 
-        <xsl:variable name="lookup" select="@language|@LANG" />
-         <xsl:variable name="lang" select="$langcodes[@a3b=$lookup]/@a2" />
+        <xsl:variable name="lang" select="@language|@LANG" />
                   
           <xsl:choose>
           
@@ -96,7 +102,7 @@ License: MIT License (MIT)
 
               <xsl:when test="$language != 'unknown'">
                   <xsl:attribute name="lang">
-                      <xsl:value-of select="$langcodes[@a3b=$language]/@a2" />
+                      <xsl:value-of select="$language" />
                   </xsl:attribute>
               </xsl:when>
 
@@ -122,11 +128,63 @@ License: MIT License (MIT)
     <xsl:variable name="fontsize"><xsl:value-of select="//Styles/TextStyle[@ID=$textstyleid]/@FONTSIZE" /></xsl:variable>
  
     <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}" x_font="{$fontfamily}" x_size="{$fontsize}">
+    
+      <xsl:choose>
+        <xsl:when test="@STYLE = 'bold'">
+          <strong>
+              <xsl:call-template name="content"/>
+          </strong>
+        </xsl:when>
+        <xsl:when test="@STYLE = 'italics'">
+          <em>
+              <xsl:call-template name="content"/>
+          </em>
+        </xsl:when>
+        <xsl:when test="@STYLE = 'subscript'">
+          <sub>
+              <xsl:call-template name="content"/>
+          </sub>
+        </xsl:when>
+        <xsl:when test="@STYLE = 'superscript'">
+          <sup>
+              <xsl:call-template name="content"/>
+          </sup>
+        </xsl:when>
+        <xsl:when test="@STYLE = 'underline'">
+          <u>
+              <xsl:call-template name="content"/>
+          </u>
+        </xsl:when>
+        <xsl:when test="@STYLE = 'smallcaps'">
+          <span class="small-caps">
+              <xsl:call-template name="content"/>
+          </span>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:call-template name="content"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    
+     </span>
+
+  </xsl:template>
+  
+
+ <xsl:template name="content">
+ 
+    <xsl:choose>
+      <xsl:when test="@CONTENT != ''">
         <xsl:value-of select="@CONTENT"/>
         <xsl:if test="local-name(following-sibling::*[1]) = 'HYP'">
              <xsl:text>-</xsl:text>
          </xsl:if>
-     </span>
+      </xsl:when>
+      <xsl:otherwise>
+            <xsl:text>
+            </xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+ 
   </xsl:template>
   
 
