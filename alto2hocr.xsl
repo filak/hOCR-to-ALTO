@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Author:  Filip Kriz (@filak)
-Version: 1.3.4   5-12-2018
+Version: 1.3.5   12-12-2018
 License: MIT License (MIT)
 -->
 <xsl:stylesheet version="2.0"
@@ -18,6 +18,7 @@ License: MIT License (MIT)
   <!-- Default language code - fallback value -->
   <xsl:param name="language" select="'unknown'" />
 
+
   <xsl:template match="/">
 
     <xsl:choose>
@@ -26,6 +27,7 @@ License: MIT License (MIT)
           <xsl:apply-templates/>
         </html>
       </xsl:when>
+
       <xsl:otherwise>
         <html>
           <xsl:apply-templates/>
@@ -33,7 +35,8 @@ License: MIT License (MIT)
       </xsl:otherwise>
     </xsl:choose>
   
-  </xsl:template>
+ </xsl:template>
+  
   
   <xsl:template match="Description">
     <head>
@@ -90,27 +93,24 @@ License: MIT License (MIT)
  <xsl:template match="TextBlock">
     <p class="ocr_par" dir="ltr" id="{mf:getId(@ID,'par',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
 
-        <xsl:variable name="lang" select="@language|@LANG" />
-                  
-          <xsl:choose>
-          
-              <xsl:when test="$lang != ''">
-                  <xsl:attribute name="lang">
-                      <xsl:value-of select="$lang" />
-                  </xsl:attribute>
-              </xsl:when>
+      <xsl:variable name="lang" select="@language|@LANG" />
 
-              <xsl:when test="$language != 'unknown'">
-                  <xsl:attribute name="lang">
-                      <xsl:value-of select="$language" />
-                  </xsl:attribute>
-              </xsl:when>
+        <xsl:choose>
+            <xsl:when test="$lang != ''">
+                <xsl:attribute name="lang">
+                    <xsl:value-of select="$lang" />
+                </xsl:attribute>
+            </xsl:when>
 
-          </xsl:choose>
-
+            <xsl:when test="$language != 'unknown'">
+                <xsl:attribute name="lang">
+                    <xsl:value-of select="$language" />
+                </xsl:attribute>
+            </xsl:when>
+        </xsl:choose>
     
-        <xsl:apply-templates select="TextLine"/>
-     </p>
+       <xsl:apply-templates select="TextLine"/>
+    </p>
   </xsl:template>
 
 
@@ -126,9 +126,26 @@ License: MIT License (MIT)
     <xsl:variable name="textstyleid"><xsl:value-of select="@STYLEREFS"/></xsl:variable>
     <xsl:variable name="fontfamily"><xsl:value-of select="//Styles/TextStyle[@ID=$textstyleid]/@FONTFAMILY" /></xsl:variable>
     <xsl:variable name="fontsize"><xsl:value-of select="//Styles/TextStyle[@ID=$textstyleid]/@FONTSIZE" /></xsl:variable>
- 
-    <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}" x_font="{$fontfamily}" x_size="{$fontsize}">
     
+    <xsl:choose>
+      <xsl:when test="$textstyleid!=''">
+        <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}" x_font="{$fontfamily}" x_size="{$fontsize}">
+           <xsl:call-template name="style_and_content"/>
+        </span>
+      </xsl:when>
+
+      <xsl:otherwise>
+        <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
+           <xsl:call-template name="style_and_content"/>
+        </span>
+      </xsl:otherwise>
+    </xsl:choose>
+
+  </xsl:template>
+
+  
+  <xsl:template name="style_and_content">
+ 
       <xsl:choose>
         <xsl:when test="@STYLE = 'bold'">
           <strong>
@@ -164,13 +181,11 @@ License: MIT License (MIT)
             <xsl:call-template name="content"/>
         </xsl:otherwise>
       </xsl:choose>
-    
-     </span>
-
-  </xsl:template>
+ 
+ </xsl:template>
   
 
- <xsl:template name="content">
+  <xsl:template name="content">
  
     <xsl:choose>
       <xsl:when test="@CONTENT != ''">
@@ -179,6 +194,7 @@ License: MIT License (MIT)
              <xsl:text>-</xsl:text>
          </xsl:if>
       </xsl:when>
+
       <xsl:otherwise>
             <xsl:text>
             </xsl:text>
@@ -198,19 +214,22 @@ License: MIT License (MIT)
     <xsl:value-of select="string-join(('bbox', $HPOS, $VPOS, string($right), string($bottom)),' ')"/>
 </xsl:function>
 
+
 <xsl:function name="mf:getId">
     <xsl:param name="ID"/>
     <xsl:param name="nodetype"/>
     <xsl:param name="node"/>
     
     <xsl:choose>
-    <xsl:when test="$ID!=''">
-          <xsl:value-of select="$ID"/>
-    </xsl:when>
-    <xsl:otherwise>
-          <xsl:value-of select="concat($nodetype,'_',generate-id($node))"/>
-    </xsl:otherwise>
+      <xsl:when test="$ID!=''">
+            <xsl:value-of select="$ID"/>
+      </xsl:when>
+
+      <xsl:otherwise>
+            <xsl:value-of select="concat($nodetype,'_',generate-id($node))"/>
+      </xsl:otherwise>
     </xsl:choose>
+
 </xsl:function>
   
   
