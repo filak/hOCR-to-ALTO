@@ -109,7 +109,13 @@ License: MIT License (MIT)
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
       <TextLine ID="{@id}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}">
       
-          <xsl:apply-templates select="*:span[@class='ocrx_word']"/>
+          <xsl:when test="*:span[@class='ocrx_word']">
+              <xsl:apply-templates select="*:span[@class='ocrx_word']"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <String CONTENT="{normalize-space(.)}"/>
+            </xsl:otherwise>
+          </xsl:choose>
       
       </TextLine>
   </xsl:template>
