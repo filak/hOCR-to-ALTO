@@ -43,7 +43,14 @@ License: MIT License (MIT)
       <title>Image: <xsl:apply-templates select="sourceImageInformation"/></title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
       <xsl:apply-templates select="OCRProcessing/ocrProcessingStep"/>
-      <meta name='ocr-capabilities' content='ocr_page ocr_carea ocr_par ocr_line ocrx_word' />
+      
+      <xsl:choose>
+        <xsl:when test="//ComposedBlock">
+          <meta name='ocr-capabilities' content='ocr_page ocr_carea ocr_par ocr_line ocrx_word' />
+        </xsl:when>
+        <xsl:otherwise><meta name='ocr-capabilities' content='ocr_page ocr_par ocr_line ocrx_word' /></xsl:otherwise>
+      </xsl:choose>
+      
     </head>
   </xsl:template>
   
