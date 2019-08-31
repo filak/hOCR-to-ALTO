@@ -60,7 +60,7 @@ License: MIT License (MIT)
         <Page ID="{@id}" PHYSICAL_IMG_NR="1" HEIGHT="{$box[5]}" WIDTH="{$box[4]}">
             <PrintSpace HEIGHT="{$box[5]}" WIDTH="{$box[4]}" VPOS="0" HPOS="0">
 
-                <xsl:apply-templates select="*:div[@class='ocr_carea']"/>
+                <xsl:apply-templates/>
 
             </PrintSpace>
         </Page>
@@ -71,7 +71,7 @@ License: MIT License (MIT)
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
       <ComposedBlock ID="{@id}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}">
       
-          <xsl:apply-templates select="*:p[@class='ocr_par']"/>
+          <xsl:apply-templates/>
 
       </ComposedBlock>
   </xsl:template>
@@ -103,7 +103,7 @@ License: MIT License (MIT)
 
           </xsl:choose>
       
-          <xsl:apply-templates select="*:span[@class='ocr_line']"/>
+          <xsl:apply-templates/>
       
       </TextBlock>
   </xsl:template>
