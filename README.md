@@ -10,15 +10,15 @@ interface to using these stylesheets.
 ## CONTENTS
 
   * [`./alto2hocr.xsl`](./alto2hocr.xsl)
-    * Convert ALTO 2.0 / ALTO 2.1 to hOCR
+    * Convert ALTO v2.0 / ALTO v2.1 to hOCR
   * [`./hocr2alto2.0.xsl`](./hocr2alto2.0.xsl)
-    * Convert hOCR to ALTO 2.0
+    * Convert hOCR to ALTO v2.0
   * [`./hocr2alto2.1.xsl`](./hocr2alto2.1.xsl)  
-    * Convert hOCR to ALTO 2.1
+    * Convert hOCR to ALTO v2.1
   * [`./hocr2alto3.0.xsl`](./hocr2alto3.0.xsl)     
-    * Convert hOCR to ALTO 3.0
+    * Convert hOCR to ALTO v3
   * [`./alto2text.xsl`](./alto2text.xsl)
-    * Convert ALTO 2.0 / ALTO 2.1 to plain text
+    * Convert ALTO v2.0 / ALTO v2.1 to plain text
   * [`./alto2text.xsl`](./alto2text.xsl)
     * Convert hOCR to plain text
   * [`codes_lookup.xml`](./codes_lookup.xml)
