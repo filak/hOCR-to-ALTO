@@ -7,21 +7,26 @@ capable transformer, like [Saxon](http://www.saxonica.com/ce/user-doc/1.1/).
 See [ocr-fileformat](https://github.com/UB-Mannheim/ocr-fileformat) for an
 interface to using these stylesheets.
 
+File naming scheme:   sourceFormatVersion__targetFormatVersion.xsl
+
 ## CONTENTS
 
-  * [`./alto2hocr.xsl`](./alto2hocr.xsl)
-    * Convert ALTO v2.0-1 to hOCR
-  * [`./hocr2alto2.0.xsl`](./hocr2alto2.0.xsl)
-    * Convert hOCR to ALTO v2.0
-  * [`./hocr2alto2.1.xsl`](./hocr2alto2.1.xsl)  
-    * Convert hOCR to ALTO v2.1
-  * [`./hocr2alto3.0.xsl`](./hocr2alto3.0.xsl)     
-    * Convert hOCR to ALTO v3
-  * [`./alto2text.xsl`](./alto2text.xsl)
-    * Convert ALTO v2.0-1 to plain text
-  * [`./hocr2text.xsl`](./hocr2text.xsl)
-    * Convert hOCR to plain text
-  * [`codes_lookup.xml`](./codes_lookup.xml)
-    * ISO language codes
+  * Convert ALTO to hOCR
+    * [`alto2__hocr.xsl`](./alto2__hocr.xsl) 
+    * [`alto3__hocr.xsl`](./alto3__hocr.xsl)  
+    * [`alto4__hocr.xsl`](./alto4__hocr.xsl)  
+  * Convert hOCR to ALTO
+    * [`hocr__alto2.0.xsl`](./hocr__alto2.0.xsl) 
+    * [`hocr__alto2.1.xsl`](./hocr__alto2.1.xsl)  
+    * [`hocr__alto3.xsl`](./hocr__alto3.xsl)     
+    * [`hocr__alto4.xsl`](./hocr__alto4.xsl)
+  * Convert ALTO to plain text
+    * [`alto2__text.xsl`](./alto2__text.xsl)
+    * [`alto3__text.xsl`](./alto3__text.xsl)     
+    * [`alto4__text.xsl`](./alto4__text.xsl)
+  * Convert hOCR to plain text
+    * [`hocr__text.xsl`](./hocr__text.xsl)
+  * Language codes
+    * [`codes_lookup.xml`](./codes_lookup.xml)
     * file generated with https://github.com/filak/iso-language-codes
 
