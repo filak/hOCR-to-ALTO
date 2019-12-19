@@ -2,7 +2,7 @@
 Convert between Tesseract hOCR and ALTO XML 2.0/2.1/3/4 using XSL stylesheets
 
 The XSLT scripts are written as XSLT 2.0 scripts, so they require an XSLT 2.0
-capable transformer, like [Saxon](http://www.saxonica.com/ce/user-doc/1.1/).
+capable transformer, like [Saxon](https://www.saxonica.com/download/java.xml).
 
 See [ocr-fileformat](https://github.com/UB-Mannheim/ocr-fileformat) for an
 interface to using these stylesheets.
