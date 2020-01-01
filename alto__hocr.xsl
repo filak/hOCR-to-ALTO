@@ -8,7 +8,7 @@ License: MIT
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:mf="http://myfunctions" 
-    xpath-default-namespace="http://www.loc.gov/standards/alto/ns-v3#" 
+    xpath-default-namespace="http://www.loc.gov/standards/alto/ns-v4#" 
     exclude-result-prefixes="#all">
 
   <xsl:output method="xml" encoding="utf-8" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" 
@@ -37,14 +37,14 @@ License: MIT
  </xsl:template>
   
   
-  <xsl:template match="Description">
+  <xsl:template match="*:Description">
     <head>
-      <title>Image: <xsl:apply-templates select="sourceImageInformation"/></title>
+      <title>Image: <xsl:apply-templates select="*:sourceImageInformation"/></title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-      <xsl:apply-templates select="OCRProcessing/ocrProcessingStep"/>
+      <xsl:apply-templates select="*:OCRProcessing/*:ocrProcessingStep"/>
       
       <xsl:choose>
-        <xsl:when test="//ComposedBlock">
+        <xsl:when test="//*:ComposedBlock">
           <meta name='ocr-capabilities' content='ocr_page ocr_carea ocr_par ocr_line ocrx_word' />
         </xsl:when>
         <xsl:otherwise><meta name='ocr-capabilities' content='ocr_page ocr_par ocr_line ocrx_word' /></xsl:otherwise>
@@ -54,49 +54,49 @@ License: MIT
   </xsl:template>
   
   
-  <xsl:template match="sourceImageInformation">
-        <xsl:value-of select="fileName"/>
+  <xsl:template match="*:sourceImageInformation">
+        <xsl:value-of select="*:fileName"/>
   </xsl:template>
 
  
-  <xsl:template match="OCRProcessing/ocrProcessingStep">
-      <meta name='ocr-system' content='{processingSoftware/softwareName} {processingSoftware/softwareVersion}' />
+  <xsl:template match="*:OCRProcessing/*:ocrProcessingStep|*:Processing/*:processingStep">
+      <meta name='ocr-system' content='{*:processingSoftware/*:softwareName} {*:processingSoftware/*:softwareVersion}' />
   </xsl:template>
 
 
-  <xsl:template match="Styles">
+  <xsl:template match="*:Styles">
   </xsl:template>
 
   
-  <xsl:template match="Layout">
+  <xsl:template match="*:Layout">
     <body>
-        <xsl:apply-templates select="Page"/>
+        <xsl:apply-templates select="*:Page"/>
      </body>
   </xsl:template>
  
  
- <xsl:template match="Page">
-    <xsl:variable name="fname"><xsl:value-of select="//alto/Description/sourceImageInformation/fileName"/></xsl:variable>
+ <xsl:template match="*:Page">
+    <xsl:variable name="fname"><xsl:value-of select="//*:alto/*:Description/*:sourceImageInformation/*:fileName"/></xsl:variable>
     <div class="ocr_page" id="{mf:getId(@ID,'page',.)}" title="image {$fname}; bbox 0 0 {@WIDTH} {@HEIGHT}; ppageno 0">
-        <xsl:apply-templates select="PrintSpace"/>
+        <xsl:apply-templates select="*:PrintSpace"/>
      </div>
   </xsl:template>
   
   
- <xsl:template match="PrintSpace">
-        <xsl:apply-templates select="ComposedBlock"/>
-        <xsl:apply-templates select="TextBlock"/>
+ <xsl:template match="*:PrintSpace">
+        <xsl:apply-templates select="*:ComposedBlock"/>
+        <xsl:apply-templates select="*:TextBlock"/>
   </xsl:template>
 
  
- <xsl:template match="ComposedBlock">
+ <xsl:template match="*:ComposedBlock">
     <div class="ocr_carea" id="{mf:getId(@ID,'block',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
-         <xsl:apply-templates select="TextBlock"/>
+         <xsl:apply-templates select="*:TextBlock"/>
      </div>
   </xsl:template>
 
 
- <xsl:template match="TextBlock">
+  <xsl:template match="*:TextBlock">
     <p class="ocr_par" dir="ltr" id="{mf:getId(@ID,'par',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
 
       <xsl:variable name="lang" select="@language|@LANG" />
@@ -115,26 +115,26 @@ License: MIT
             </xsl:when>
         </xsl:choose>
     
-       <xsl:apply-templates select="TextLine"/>
+       <xsl:apply-templates select="*:TextLine"/>
     </p>
   </xsl:template>
 
 
- <xsl:template match="TextLine">
+ <xsl:template match="*:TextLine">
     <span class="ocr_line" id="{mf:getId(@ID,'line',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
-        <xsl:apply-templates select="String"/>
+        <xsl:apply-templates select="*:String"/>
      </span>
   </xsl:template>
 
 
- <xsl:template match="String">
+ <xsl:template match="*:String">
  
     <xsl:variable name="textstyleid"><xsl:value-of select="@STYLEREFS"/></xsl:variable>
     <xsl:variable name="fontfamily"><xsl:value-of select="//Styles/TextStyle[@ID=$textstyleid]/@FONTFAMILY" /></xsl:variable>
     <xsl:variable name="fontsize"><xsl:value-of select="//Styles/TextStyle[@ID=$textstyleid]/@FONTSIZE" /></xsl:variable>
     
     <xsl:choose>
-      <xsl:when test="$textstyleid!=''">
+      <xsl:when test="$textstyleid != ''">
         <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}" x_font="{$fontfamily}" x_size="{$fontsize}">
            <xsl:call-template name="style_and_content"/>
         </span>
