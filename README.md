@@ -12,18 +12,14 @@ File naming scheme:   sourceFormatVersion__targetFormatVersion.xsl
 ## CONTENTS
 
   * Convert ALTO to hOCR
-    * [`alto2__hocr.xsl`](./alto2__hocr.xsl) 
-    * [`alto3__hocr.xsl`](./alto3__hocr.xsl)  
-    * [`alto4__hocr.xsl`](./alto4__hocr.xsl)  
+    * [`alto__hocr.xsl`](./alto__hocr.xsl) 
   * Convert hOCR to ALTO
     * [`hocr__alto2.0.xsl`](./hocr__alto2.0.xsl) 
     * [`hocr__alto2.1.xsl`](./hocr__alto2.1.xsl)  
     * [`hocr__alto3.xsl`](./hocr__alto3.xsl)     
     * [`hocr__alto4.xsl`](./hocr__alto4.xsl)
   * Convert ALTO to plain text
-    * [`alto2__text.xsl`](./alto2__text.xsl)
-    * [`alto3__text.xsl`](./alto3__text.xsl)     
-    * [`alto4__text.xsl`](./alto4__text.xsl)
+    * [`alto__text.xsl`](./alto__text.xsl)
   * Convert hOCR to plain text
     * [`hocr__text.xsl`](./hocr__text.xsl)
   * Language codes
