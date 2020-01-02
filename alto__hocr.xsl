@@ -90,14 +90,14 @@ License: MIT
 
  
  <xsl:template match="*:ComposedBlock">
-    <div class="ocr_carea" id="{mf:getId(@ID,'block',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
+    <div class="ocr_carea" id="{mf:getId(@ID,'block',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS,@WC)}">
          <xsl:apply-templates select="*:TextBlock"/>
      </div>
   </xsl:template>
 
 
   <xsl:template match="*:TextBlock">
-    <p class="ocr_par" dir="ltr" id="{mf:getId(@ID,'par',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
+    <p class="ocr_par" dir="ltr" id="{mf:getId(@ID,'par',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS,@WC)}">
 
       <xsl:variable name="lang" select="@language|@LANG" />
 
@@ -121,7 +121,7 @@ License: MIT
 
 
  <xsl:template match="*:TextLine">
-    <span class="ocr_line" id="{mf:getId(@ID,'line',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
+    <span class="ocr_line" id="{mf:getId(@ID,'line',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS,@WC)}">
         <xsl:apply-templates select="*:String"/>
      </span>
   </xsl:template>
@@ -135,13 +135,13 @@ License: MIT
     
     <xsl:choose>
       <xsl:when test="$textstyleid != ''">
-        <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}" x_font="{$fontfamily}" x_size="{$fontsize}">
+        <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS,@WC)}" x_font="{$fontfamily}" x_size="{$fontsize}">
            <xsl:call-template name="style_and_content"/>
         </span>
       </xsl:when>
 
       <xsl:otherwise>
-        <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS)}">
+        <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS,@WC)}">
            <xsl:call-template name="style_and_content"/>
         </span>
       </xsl:otherwise>
@@ -215,9 +215,23 @@ License: MIT
     <xsl:param name="WIDTH"/>
     <xsl:param name="VPOS"/>
     <xsl:param name="HPOS"/>
+    <xsl:param name="WC"/>
+
     <xsl:variable name="right" select="number($WIDTH) + number($HPOS)"/>
     <xsl:variable name="bottom" select="number($HEIGHT) + number($VPOS)"/>
-    <xsl:value-of select="string-join(('bbox', $HPOS, $VPOS, string($right), string($bottom)),' ')"/>
+    
+    <xsl:choose>
+      <xsl:when test="$WC!=''">
+        <xsl:variable name="wconf" select="number($WC) * 100"/>
+        <xsl:variable name="wconfString" select="concat('; x_wconf ',string($wconf))"/>
+        <xsl:value-of select="string-join(('bbox', $HPOS, $VPOS, string($right), string($bottom), $wconfString),' ')"/>
+      </xsl:when>
+
+      <xsl:otherwise>
+          <xsl:value-of select="string-join(('bbox', $HPOS, $VPOS, string($right), string($bottom)),' ')"/>
+      </xsl:otherwise>
+    </xsl:choose>
+
 </xsl:function>
 
 
