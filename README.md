@@ -23,6 +23,4 @@ File naming scheme:   sourceFormatVersion__targetFormatVersion.xsl
   * Convert hOCR to plain text
     * [`hocr__text.xsl`](./hocr__text.xsl)
   * Language codes
-    * [`codes_lookup.xml`](./codes_lookup.xml)
-    * file generated with https://github.com/filak/iso-language-codes
-
+    * [`codes_lookup.xml`](./codes_lookup.xml) - generated with https://github.com/filak/iso-language-codes
