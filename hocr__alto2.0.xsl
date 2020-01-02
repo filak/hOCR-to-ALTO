@@ -86,8 +86,8 @@ License: MIT
                   <xsl:variable name="lookup" select="@lang" />
                   <xsl:attribute name="language">
                       <xsl:choose>
-                        <xsl:when test="$langcodes[@a3h=$lookup]/@2!=''">
-                            <xsl:value-of select="$langcodes[@a3h=$lookup]/@2" />
+                        <xsl:when test="$langcodes[@a3h=$lookup]/@a2!=''">
+                            <xsl:value-of select="$langcodes[@a3h=$lookup]/@a2" />
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:value-of select="@lang" />
@@ -105,7 +105,7 @@ License: MIT
               <xsl:when test="$teslang != 'notset'">
                   <xsl:variable name="lookup" select="@teslang" />
                   <xsl:attribute name="language">
-                      <xsl:value-of select="$langcodes[@a3h=$lookup]/@2" />
+                      <xsl:value-of select="$langcodes[@a3h=$lookup]/@a2" />
                   </xsl:attribute>
               </xsl:when>
 
