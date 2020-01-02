@@ -9,6 +9,7 @@ License: MIT
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:mf="http://myfunctions" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xpath-default-namespace="*" 
     exclude-result-prefixes="mf">
 
@@ -47,8 +48,12 @@ License: MIT
   </xsl:template>
   
 
-  <xsl:template match="*:body/*:div[@class='ocr_page']">
+  <xsl:template match="*:body[*:div[@class='ocr_page']]">
         <Layout>
+            <xsl:apply-templates select="*:div[@class='ocr_page']"/>
+        </Layout>
+  </xsl:template>
+  <xsl:template match="*:div[@class='ocr_page']">
         <!--  bbox 552 999 1724 1141 x1-L2-T3-R4-B5 -->
         <xsl:variable name="box" select="tokenize(mf:getBoxPage(@title), ' ')"/>
             <Page ID="{@id}" PHYSICAL_IMG_NR="1" HEIGHT="{$box[5]}" WIDTH="{$box[4]}">
@@ -58,7 +63,6 @@ License: MIT
 
                 </PrintSpace>
             </Page>
-        </Layout>
   </xsl:template>
   
   
@@ -75,12 +79,20 @@ License: MIT
   <xsl:template match="*:p[@class='ocr_par']">
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
       <TextBlock ID="{@id}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}">
-          
+                
           <xsl:choose>
           
               <xsl:when test="@lang != ''">
+                  <xsl:variable name="lookup" select="@lang" />
                   <xsl:attribute name="language">
-                      <xsl:value-of select="@lang" />
+                      <xsl:choose>
+                        <xsl:when test="$langcodes[@a3h=$lookup]/@2!=''">
+                            <xsl:value-of select="$langcodes[@a3h=$lookup]/@2" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="@lang" />
+                        </xsl:otherwise>
+                      </xsl:choose>
                   </xsl:attribute>
               </xsl:when>
 
@@ -91,8 +103,9 @@ License: MIT
               </xsl:when>
 
               <xsl:when test="$teslang != 'notset'">
+                  <xsl:variable name="lookup" select="@teslang" />
                   <xsl:attribute name="language">
-                      <xsl:value-of select="$langcodes[@a3h=$teslang]/@a3b" />
+                      <xsl:value-of select="$langcodes[@a3h=$lookup]/@2" />
                   </xsl:attribute>
               </xsl:when>
 
@@ -123,18 +136,19 @@ License: MIT
 
   <xsl:template match="*:span[@class='ocrx_word']">
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
+      <xsl:variable name="wc" select="mf:getConfidence(@title)"/>
         <xsl:choose>
           <xsl:when test="*:strong">
-             <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="bold"/>
+             <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" WC="{$wc}" STYLE="bold"/>
           </xsl:when>
           <xsl:when test="*:em">
-             <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="italics"/>
+              <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" WC="{$wc}" STYLE="italics"/>
           </xsl:when>
           <xsl:when test="*:i">
-             <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" STYLE="italics"/>
+              <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" WC="{$wc}" STYLE="italics"/>
           </xsl:when>
           <xsl:otherwise>
-               <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" />
+              <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" WC="{$wc}" />
           </xsl:otherwise>
         </xsl:choose>
   </xsl:template>
@@ -143,7 +157,7 @@ License: MIT
 <xsl:function name="mf:getFname">
     <xsl:param name="titleString"/>
     <xsl:variable name="pPat">"</xsl:variable>
-    <xsl:variable name="fpath" select="tokenize(tokenize(normalize-space($titleString),'; ')[1],' ')[2]"/>
+    <xsl:variable name="fpath" select="substring-after(tokenize(normalize-space($titleString),'; ')[1],'image &quot;')"/>
     <xsl:value-of select="reverse(tokenize(replace($fpath,$pPat,''),'\\'))[1]"/>
 </xsl:function>
   
@@ -157,5 +171,20 @@ License: MIT
     <xsl:value-of select="tokenize(normalize-space($titleString),'; ')"/>
 </xsl:function>
 
+<xsl:function name="mf:getConfidence">
+    <xsl:param name="titleString"/>
+    <xsl:variable name="wconfString" select="tokenize(normalize-space($titleString),'; ')[2]" />
+    
+    <xsl:choose>
+      <xsl:when test="$wconfString != ''">
+        <xsl:variable name="wconf" as="xs:float" select="replace($wconfString, 'x_wconf ','') cast as xs:float"/>
+        <xsl:value-of select="$wconf div 100"></xsl:value-of>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="0"></xsl:value-of>
+      </xsl:otherwise>
+    </xsl:choose>
+    
+</xsl:function>
 
   </xsl:stylesheet>

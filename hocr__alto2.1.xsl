@@ -83,11 +83,19 @@ License: MIT
           <xsl:choose>
           
               <xsl:when test="@lang != ''">
+                  <xsl:variable name="lookup" select="@lang" />
                   <xsl:attribute name="LANG">
-                      <xsl:value-of select="@lang" />
+                      <xsl:choose>
+                        <xsl:when test="$langcodes[@a3h=$lookup]/@2!=''">
+                            <xsl:value-of select="$langcodes[@a3h=$lookup]/@2" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="@lang" />
+                        </xsl:otherwise>
+                      </xsl:choose>
                   </xsl:attribute>
               </xsl:when>
-              
+
               <xsl:when test="$language != 'unknown'">
                   <xsl:attribute name="LANG">
                       <xsl:value-of select="$language" />
@@ -95,8 +103,9 @@ License: MIT
               </xsl:when>
 
               <xsl:when test="$teslang != 'notset'">
+                  <xsl:variable name="lookup" select="@teslang" />
                   <xsl:attribute name="LANG">
-                      <xsl:value-of select="$langcodes[@a3h=$teslang]/@a3b" />
+                      <xsl:value-of select="$langcodes[@a3h=$lookup]/@2" />
                   </xsl:attribute>
               </xsl:when>
 
@@ -144,6 +153,7 @@ License: MIT
         </xsl:choose>
   </xsl:template>
 
+
 <xsl:function name="mf:getFname">
     <xsl:param name="titleString"/>
     <xsl:variable name="pPat">"</xsl:variable>
@@ -167,8 +177,8 @@ License: MIT
     
     <xsl:choose>
       <xsl:when test="$wconfString != ''">
-        <xsl:variable name="wconfInt" as="xs:integer" select="replace($wconfString, 'x_wconf ','') cast as xs:integer"/>
-        <xsl:value-of select="$wconfInt div 100"></xsl:value-of>
+        <xsl:variable name="wconf" as="xs:float" select="replace($wconfString, 'x_wconf ','') cast as xs:float"/>
+        <xsl:value-of select="$wconf div 100"></xsl:value-of>
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="0"></xsl:value-of>
