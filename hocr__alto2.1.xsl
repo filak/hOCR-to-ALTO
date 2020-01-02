@@ -25,7 +25,7 @@ License: MIT
   <xsl:variable name="langcodes" select="document('codes_lookup.xml')/*:codes/*:code" />
 
   <xsl:template match="/">
-        <alto xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v2# http://www.loc.gov/standards/alto/alto.xsd">
+        <alto xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v2# https://www.loc.gov/standards/alto/alto.xsd">
             <xsl:apply-templates/>
         </alto>
   </xsl:template>

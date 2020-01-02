@@ -111,6 +111,8 @@ License: MIT
 
           </xsl:choose>
       
+          <xsl:apply-templates/>
+
       </TextBlock>
   </xsl:template>
  
