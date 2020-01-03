@@ -7,6 +7,8 @@ capable transformer, like [Saxon](https://www.saxonica.com/download/java.xml).
 See [ocr-fileformat](https://github.com/UB-Mannheim/ocr-fileformat) for an
 interface to using these stylesheets.
 
+hOCR-spec https://kba.cloud/hocr-spec/1.2/ 
+
 File naming scheme:   sourceFormatVersion__targetFormatVersion.xsl
 
 ## CONTENTS
