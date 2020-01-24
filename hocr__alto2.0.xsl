@@ -30,6 +30,7 @@ License: MIT
         </alto>
   </xsl:template>
 
+
   <xsl:template match="*:head">
         <Description>
             <MeasurementUnit>pixel</MeasurementUnit>
@@ -53,16 +54,43 @@ License: MIT
             <xsl:apply-templates select="*:div[@class='ocr_page']"/>
         </Layout>
   </xsl:template>
+
+
   <xsl:template match="*:div[@class='ocr_page']">
         <!--  bbox 552 999 1724 1141 x1-L2-T3-R4-B5 -->
         <xsl:variable name="box" select="tokenize(mf:getBoxPage(@title), ' ')"/>
-            <Page ID="{@id}" PHYSICAL_IMG_NR="1" HEIGHT="{$box[5]}" WIDTH="{$box[4]}">
-                <PrintSpace HEIGHT="{$box[5]}" WIDTH="{$box[4]}" VPOS="0" HPOS="0">
+        <Page ID="{@id}" PHYSICAL_IMG_NR="1" HEIGHT="{$box[5]}" WIDTH="{$box[4]}">
 
-                    <xsl:apply-templates/>
+            <xsl:apply-templates select="*:div[@class='ocr_header']"/>
 
-                </PrintSpace>
-            </Page>
+            <PrintSpace HEIGHT="{$box[5]}" WIDTH="{$box[4]}" VPOS="0" HPOS="0">
+                <xsl:apply-templates select="*:div[@class='ocr_carea']"/>
+                <xsl:apply-templates select="*:p[@class='ocr_par']"/>
+            </PrintSpace>
+
+            <xsl:apply-templates select="*:div[@class='ocr_footer']"/>
+
+        </Page>
+  </xsl:template>
+
+
+  <xsl:template match="*:div[@class='ocr_header']">
+      <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
+      <TopMargin ID="{@id}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}">
+      
+          <xsl:apply-templates/>
+
+      </TopMargin>
+  </xsl:template>
+  
+  
+  <xsl:template match="*:div[@class='ocr_footer']">
+      <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
+      <BottomMargin ID="{@id}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}">
+      
+          <xsl:apply-templates/>
+
+      </BottomMargin>
   </xsl:template>
   
   
@@ -153,23 +181,27 @@ License: MIT
         </xsl:choose>
   </xsl:template>
 
- 
+
+
 <xsl:function name="mf:getFname">
     <xsl:param name="titleString"/>
     <xsl:variable name="pPat">"</xsl:variable>
     <xsl:variable name="fpath" select="substring-after(tokenize(normalize-space($titleString),'; ')[1],'image &quot;')"/>
     <xsl:value-of select="reverse(tokenize(replace($fpath,$pPat,''),'\\'))[1]"/>
 </xsl:function>
-  
+
+
 <xsl:function name="mf:getBoxPage">
     <xsl:param name="titleString"/>
     <xsl:value-of select="tokenize(normalize-space($titleString),'; ')[2]"/>
 </xsl:function>
 
+
 <xsl:function name="mf:getBox">
     <xsl:param name="titleString"/>
     <xsl:value-of select="tokenize(normalize-space($titleString),'; ')"/>
 </xsl:function>
+
 
 <xsl:function name="mf:getConfidence">
     <xsl:param name="titleString"/>
@@ -186,5 +218,6 @@ License: MIT
     </xsl:choose>
     
 </xsl:function>
-
+  
+ 
   </xsl:stylesheet>

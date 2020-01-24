@@ -71,7 +71,17 @@ License: MIT
  <xsl:template match="*:Page">
     <xsl:variable name="fname"><xsl:value-of select="//*:alto/*:Description/*:sourceImageInformation/*:fileName"/></xsl:variable>
     <div class="ocr_page" id="{mf:getId(@ID,'page',.)}" title="image {$fname}; bbox 0 0 {@WIDTH} {@HEIGHT}; ppageno 0">
+        <xsl:apply-templates select="*:TopMargin"/>
         <xsl:apply-templates select="*:PrintSpace"/>
+        <xsl:apply-templates select="*:BottomMargin"/>
+     </div>
+  </xsl:template>
+  
+  
+ <xsl:template match="*:TopMargin">
+    <div class="ocr_header" id="{mf:getId(@ID,'block',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS,@WC)}">
+        <xsl:apply-templates select="*:ComposedBlock"/>
+         <xsl:apply-templates select="*:TextBlock"/>
      </div>
   </xsl:template>
   
@@ -80,9 +90,17 @@ License: MIT
         <xsl:apply-templates select="*:ComposedBlock"/>
         <xsl:apply-templates select="*:TextBlock"/>
   </xsl:template>
-
- 
- <xsl:template match="*:ComposedBlock">
+  
+    
+ <xsl:template match="*:BottomMargin">
+    <div class="ocr_footer" id="{mf:getId(@ID,'block',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS,@WC)}">
+        <xsl:apply-templates select="*:ComposedBlock"/>
+         <xsl:apply-templates select="*:TextBlock"/>
+     </div>
+  </xsl:template>
+  
+  
+  <xsl:template match="*:ComposedBlock">
     <div class="ocr_carea" id="{mf:getId(@ID,'block',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS,@WC)}">
          <xsl:apply-templates select="*:TextBlock"/>
      </div>
