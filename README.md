@@ -16,10 +16,10 @@ File naming scheme:   sourceFormatVersion__targetFormatVersion.xsl
   * Convert ALTO to hOCR
     * [`alto__hocr.xsl`](./alto__hocr.xsl) 
   * Convert hOCR to ALTO
-    * [`hocr__alto2.0.xsl`](./hocr__alto2.0.xsl) 
-    * [`hocr__alto2.1.xsl`](./hocr__alto2.1.xsl)  
-    * [`hocr__alto3.xsl`](./hocr__alto3.xsl)     
     * [`hocr__alto4.xsl`](./hocr__alto4.xsl)
+    * [`hocr__alto3.xsl`](./hocr__alto3.xsl)
+    * [`hocr__alto2.1.xsl`](./hocr__alto2.1.xsl)     
+    * [`hocr__alto2.0.xsl`](./hocr__alto2.0.xsl) 
   * Convert ALTO to plain text
     * [`alto__text.xsl`](./alto__text.xsl)
   * Convert hOCR to plain text
