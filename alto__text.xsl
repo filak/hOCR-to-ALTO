@@ -50,7 +50,7 @@ License: MIT
       <!--         <xsl:call-template name='ansi'><xsl:with-param name='sgr'>3m</xsl:with-param></xsl:call-template> -->
       <!--     </xsl:when> -->
       <!-- </xsl:choose> -->
-      <xsl:value-of select="@CONTENT"/><xsl:text>&#x20;</xsl:text>
+      <xsl:value-of select="@CONTENT"/>
       <xsl:call-template name='ansi'><xsl:with-param name='sgr'>0m</xsl:with-param></xsl:call-template>
   </xsl:template>
 
