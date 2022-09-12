@@ -8,7 +8,6 @@ License: MIT
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:mf="http://myfunctions" 
-    xpath-default-namespace="http://www.loc.gov/standards/alto/ns-v4#" 
     exclude-result-prefixes="#all">
 
   <xsl:output method="xml" encoding="utf-8" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" 
@@ -141,12 +140,12 @@ License: MIT
  <xsl:template match="*:String">
  
     <xsl:variable name="textstyleid"><xsl:value-of select="@STYLEREFS"/></xsl:variable>
-    <xsl:variable name="fontfamily"><xsl:value-of select="//Styles/TextStyle[@ID=$textstyleid]/@FONTFAMILY" /></xsl:variable>
-    <xsl:variable name="fontsize"><xsl:value-of select="//Styles/TextStyle[@ID=$textstyleid]/@FONTSIZE" /></xsl:variable>
+    <xsl:variable name="fontfamily"><xsl:value-of select="//*:alto/*:Styles/*:TextStyle[@ID=$textstyleid]/@FONTFAMILY" /></xsl:variable>
+    <xsl:variable name="fontsize"><xsl:value-of select="//*:alto/*:Styles/TextStyle[@ID=$textstyleid]/@FONTSIZE" /></xsl:variable>
     
     <xsl:choose>
       <xsl:when test="$textstyleid != ''">
-        <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS,@WC)}" x_font="{$fontfamily}" x_size="{$fontsize}">
+        <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS,@WC)}" x_font="{$fontfamily}" x_size="{$fontsize}" x_textstyleid="{$textstyleid}">
            <xsl:call-template name="style_and_content"/>
         </span>
       </xsl:when>
