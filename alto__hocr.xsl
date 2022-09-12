@@ -141,11 +141,11 @@ License: MIT
  
     <xsl:variable name="textstyleid"><xsl:value-of select="@STYLEREFS"/></xsl:variable>
     <xsl:variable name="fontfamily"><xsl:value-of select="//*:alto/*:Styles/*:TextStyle[@ID=$textstyleid]/@FONTFAMILY" /></xsl:variable>
-    <xsl:variable name="fontsize"><xsl:value-of select="//*:alto/*:Styles/TextStyle[@ID=$textstyleid]/@FONTSIZE" /></xsl:variable>
+    <xsl:variable name="fontsize"><xsl:value-of select="//*:alto/*:Styles/*:TextStyle[@ID=$textstyleid]/@FONTSIZE" /></xsl:variable>
     
     <xsl:choose>
       <xsl:when test="$textstyleid != ''">
-        <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS,@WC)}" x_font="{$fontfamily}" x_size="{$fontsize}" x_textstyleid="{$textstyleid}">
+        <span class="ocrx_word" id="{mf:getId(@ID,'word',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS,@WC)}" x_font="{$fontfamily}" x_fsize="{$fontsize}">
            <xsl:call-template name="style_and_content"/>
         </span>
       </xsl:when>
