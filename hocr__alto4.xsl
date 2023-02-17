@@ -8,12 +8,13 @@ License: MIT
     xmlns:xlink="http://www.w3.org/1999/xlink" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-    xmlns:mf="http://myfunctions" 
+    xmlns:mf="http://myfunctions"
+    xmlns:dlb="http://www.daliboris.cz/ns/xslt/"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xpath-default-namespace="*" 
     exclude-result-prefixes="mf">
 
-  <xsl:output method="xml" encoding="utf-8" indent="no" />
+  <xsl:output method="xml" encoding="utf-8" indent="yes" />
   <xsl:strip-space elements="*"/>
   <!-- Optional params:
        - default language code (param:  language) OR
@@ -57,37 +58,62 @@ License: MIT
 
 
   <xsl:template match="*:div[@class='ocr_page']">
+
+        <xsl:variable name="properites">
+         <xsl:call-template name="get-hocr-properties" />
+        </xsl:variable>
+   
+        <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
+   <xsl:variable name="img-nr" select="if($properites/dlb:property[@name='ppageno']) then $properites/dlb:property[@name='ppageno']/dlb:item/@value else 1"/>
         <!--  bbox 552 999 1724 1141 x1-L2-T3-R4-B5 -->
         <xsl:variable name="box" select="tokenize(mf:getBoxPage(@title), ' ')"/>
-        <Page ID="{@id}" PHYSICAL_IMG_NR="1" HEIGHT="{$box[5]}" WIDTH="{$box[4]}">
+        <Page ID="{$id}" PHYSICAL_IMG_NR="{$img-nr}" HEIGHT="{$box[5]}" WIDTH="{$box[4]}">
 
             <xsl:apply-templates select="*:div[@class='ocr_header']"/>
 
             <PrintSpace HEIGHT="{$box[5]}" WIDTH="{$box[4]}" VPOS="0" HPOS="0">
-                <xsl:apply-templates select="*:div[@class='ocr_carea']"/>
-                <xsl:apply-templates select="*:p[@class='ocr_par']"/>
+               <xsl:apply-templates select="*:div[@class=('ocr_carea', 'ocrx_block','ocr_par')]"/>
             </PrintSpace>
-
+         
             <xsl:apply-templates select="*:div[@class='ocr_footer']"/>
-
-        </Page>
+       </Page>
   </xsl:template>
 
+
+ <xsl:template match="*:div[@class='ocrx_block']">
+  <xsl:apply-templates select="*:p[@class='ocr_par']"/>
+ </xsl:template>
 
   <xsl:template match="*:div[@class='ocr_header']">
+
+       <xsl:variable name="properites">
+        <xsl:call-template name="get-hocr-properties" />
+       </xsl:variable>
+   
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
-      <TopMargin ID="{@id}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}">
-      
-          <xsl:apply-templates/>
+
+   <TopMargin ID="{@id}">
+    
+         <xsl:call-template name="add-posioton-attributes">
+          <xsl:with-param name="box" select="$box" />
+         </xsl:call-template>
+         <xsl:apply-templates/>
 
       </TopMargin>
+
   </xsl:template>
-  
-  
-  <xsl:template match="*:div[@class='ocr_footer']">
+ 
+ 
+ <xsl:template match="*:div[@class='ocr_footer']">
+  <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
-      <BottomMargin ID="{@id}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}">
-      
+  
+      <BottomMargin ID="{$id}">
+       
+          <xsl:call-template name="add-posioton-attributes">
+           <xsl:with-param name="box" select="$box" />
+          </xsl:call-template>    
+
           <xsl:apply-templates/>
 
       </BottomMargin>
@@ -95,9 +121,14 @@ License: MIT
   
   
   <xsl:template match="*:div[@class='ocr_carea']">
+      <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
-      <ComposedBlock ID="{@id}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}">
-      
+      <ComposedBlock ID="{$id}">
+       
+          <xsl:call-template name="add-posioton-attributes">
+           <xsl:with-param name="box" select="$box" />
+          </xsl:call-template>
+       
           <xsl:apply-templates/>
 
       </ComposedBlock>
@@ -105,9 +136,15 @@ License: MIT
  
  
   <xsl:template match="*:p[@class='ocr_par']">
+      <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
-      <TextBlock ID="{@id}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}">
+      <TextBlock ID="{$id}">
 
+
+       <xsl:call-template name="add-posioton-attributes">
+        <xsl:with-param name="box" select="$box" />
+       </xsl:call-template>    
+       
           <xsl:choose>
           
               <xsl:when test="@lang != ''">
@@ -146,9 +183,15 @@ License: MIT
  
  
   <xsl:template match="*:span[@class='ocr_line']">
+      <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
-      <TextLine ID="{@id}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}">
-      
+      <TextLine ID="{$id}">
+
+
+       <xsl:call-template name="add-posioton-attributes">
+        <xsl:with-param name="box" select="$box" />
+       </xsl:call-template>    
+       
           <xsl:choose>
             <xsl:when test="*:span[@class='ocrx_word']">
               <xsl:apply-templates select="*:span[@class='ocrx_word']"/>
@@ -163,20 +206,37 @@ License: MIT
 
 
   <xsl:template match="*:span[@class='ocrx_word']">
+      <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
       <xsl:variable name="wc" select="mf:getConfidence(@title)"/>
         <xsl:choose>
           <xsl:when test="*:strong">
-             <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" WC="{$wc}" STYLE="bold"/>
+             <String ID="{$id}" CONTENT="{normalize-space(.)}"  WC="{$wc}" STYLE="bold">
+              <xsl:call-template name="add-posioton-attributes">
+               <xsl:with-param name="box" select="$box" />
+              </xsl:call-template>
+             </String>
           </xsl:when>
           <xsl:when test="*:em">
-              <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" WC="{$wc}" STYLE="italics"/>
+              <String ID="{$id}" CONTENT="{normalize-space(.)}" WC="{$wc}" STYLE="italics">
+               <xsl:call-template name="add-posioton-attributes">
+                <xsl:with-param name="box" select="$box" />
+               </xsl:call-template>
+              </String>
           </xsl:when>
           <xsl:when test="*:i">
-              <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" WC="{$wc}" STYLE="italics"/>
+              <String ID="{$id}" CONTENT="{normalize-space(.)}" WC="{$wc}" STYLE="italics">
+               <xsl:call-template name="add-posioton-attributes">
+                <xsl:with-param name="box" select="$box" />
+               </xsl:call-template>
+              </String>
           </xsl:when>
           <xsl:otherwise>
-              <String ID="{@id}" CONTENT="{normalize-space(.)}" HEIGHT="{number($box[5]) - number($box[3])}" WIDTH="{number($box[4]) - number($box[2])}" VPOS="{$box[3]}" HPOS="{$box[2]}" WC="{$wc}" />
+              <String ID="{$id}" CONTENT="{normalize-space(.)}" WC="{$wc}">
+               <xsl:call-template name="add-posioton-attributes">
+                <xsl:with-param name="box" select="$box" />
+               </xsl:call-template>
+              </String>
           </xsl:otherwise>
         </xsl:choose>
   </xsl:template>
@@ -193,7 +253,8 @@ License: MIT
 
 <xsl:function name="mf:getBoxPage">
     <xsl:param name="titleString"/>
-    <xsl:value-of select="tokenize(normalize-space($titleString),'; ')[2]"/>
+    <!--<xsl:value-of select="tokenize(normalize-space($titleString),'; ')[2]"/>-->
+ <xsl:value-of select="tokenize(normalize-space($titleString),'; ')[contains(., 'bbox')]"/>
 </xsl:function>
 
 
@@ -218,6 +279,55 @@ License: MIT
     </xsl:choose>
     
 </xsl:function>
+ 
+ 
+ <xsl:template name="add-posioton-attributes">
+  <xsl:param name="box"/>
+  <xsl:attribute name="HEIGHT" select="number($box[5]) - number($box[3])" />
+  <xsl:attribute name="WIDTH" select="number($box[4]) - number($box[2])" />
+  <xsl:attribute name="VPOS" select="$box[3]" />
+  <xsl:attribute name="HPOS" select="$box[2]" />
+ </xsl:template>
+ 
+ <xsl:template name="get-hocr-properties">
+  <xsl:variable name="title" select="@title"/>
+  <xsl:variable name="items" select="tokenize(@title, ';')"/>
+  <xsl:for-each select="$items">
+   <xsl:variable name="properties" select="tokenize(normalize-space(.))"/>
+   <dlb:property name="{$properties[1]}">
+    <xsl:for-each select="$properties[position() > 1]">
+     <dlb:item value="{.}">
+      <xsl:call-template name="get-value-name">
+       <xsl:with-param name="property" select="$properties[1]" />
+       <xsl:with-param name="position" select="position()" />
+      </xsl:call-template>      
+     </dlb:item>
+    </xsl:for-each>
+   </dlb:property>
+  </xsl:for-each>
+ </xsl:template>
 
+ <xsl:template name="get-value-name">
+  <xsl:param name="property"/>
+  <xsl:param name="position"/>
+  <xsl:variable name="attribute-name">
+   <xsl:choose>
+    <xsl:when test="$property = 'bbox'">
+     <xsl:choose>
+      <xsl:when test="position() = 1"><xsl:value-of select="'left'"/></xsl:when>
+      <xsl:when test="position() = 2"><xsl:value-of select="'top'"/></xsl:when>
+      <xsl:when test="position() = 3"><xsl:value-of select="'right'"/></xsl:when>
+      <xsl:when test="position() = 4"><xsl:value-of select="'bottom'"/></xsl:when>
+     </xsl:choose>
+    </xsl:when>
+   </xsl:choose>
+  </xsl:variable>
   
+  <xsl:if test="$attribute-name != ''">
+   <xsl:attribute name="name" select="$attribute-name">
+   </xsl:attribute>
+  </xsl:if>
+ </xsl:template>
+ 
+ 
 </xsl:stylesheet>
