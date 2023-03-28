@@ -59,12 +59,12 @@ License: MIT
 
   <xsl:template match="*:div[@class='ocr_page']">
 
-        <xsl:variable name="properites">
+        <xsl:variable name="properties">
          <xsl:call-template name="get-hocr-properties" />
         </xsl:variable>
    
         <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
-   <xsl:variable name="img-nr" select="if($properites/dlb:property[@name='ppageno']) then $properites/dlb:property[@name='ppageno']/dlb:item/@value else 1"/>
+        <xsl:variable name="img-nr" select="if($properties/dlb:property[@name='ppageno']) then $properties/dlb:property[@name='ppageno']/dlb:item/@value else 1"/>
         <!--  bbox 552 999 1724 1141 x1-L2-T3-R4-B5 -->
         <xsl:variable name="box" select="tokenize(mf:getBoxPage(@title), ' ')"/>
         <Page ID="{$id}" PHYSICAL_IMG_NR="{$img-nr}" HEIGHT="{$box[5]}" WIDTH="{$box[4]}">
@@ -72,7 +72,7 @@ License: MIT
             <xsl:apply-templates select="*:div[@class='ocr_header']"/>
 
             <PrintSpace HEIGHT="{$box[5]}" WIDTH="{$box[4]}" VPOS="0" HPOS="0">
-               <xsl:apply-templates select="*:div[@class=('ocr_carea', 'ocrx_block','ocr_par')]"/>
+             <xsl:apply-templates select="*:div[@class=('ocr_carea', 'ocrx_block')] | *:p[@class=('ocr_par')]"/>
             </PrintSpace>
          
             <xsl:apply-templates select="*:div[@class='ocr_footer']"/>
@@ -86,7 +86,7 @@ License: MIT
 
   <xsl:template match="*:div[@class='ocr_header']">
 
-       <xsl:variable name="properites">
+       <xsl:variable name="properties">
         <xsl:call-template name="get-hocr-properties" />
        </xsl:variable>
    
@@ -94,7 +94,7 @@ License: MIT
 
    <TopMargin ID="{@id}">
     
-         <xsl:call-template name="add-posioton-attributes">
+         <xsl:call-template name="add-position-attributes">
           <xsl:with-param name="box" select="$box" />
          </xsl:call-template>
          <xsl:apply-templates/>
@@ -110,7 +110,7 @@ License: MIT
   
       <BottomMargin ID="{$id}">
        
-          <xsl:call-template name="add-posioton-attributes">
+          <xsl:call-template name="add-position-attributes">
            <xsl:with-param name="box" select="$box" />
           </xsl:call-template>    
 
@@ -125,7 +125,7 @@ License: MIT
       <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
       <ComposedBlock ID="{$id}">
        
-          <xsl:call-template name="add-posioton-attributes">
+          <xsl:call-template name="add-position-attributes">
            <xsl:with-param name="box" select="$box" />
           </xsl:call-template>
        
@@ -141,7 +141,7 @@ License: MIT
       <TextBlock ID="{$id}">
 
 
-       <xsl:call-template name="add-posioton-attributes">
+       <xsl:call-template name="add-position-attributes">
         <xsl:with-param name="box" select="$box" />
        </xsl:call-template>    
        
@@ -188,7 +188,7 @@ License: MIT
       <TextLine ID="{$id}">
 
 
-       <xsl:call-template name="add-posioton-attributes">
+       <xsl:call-template name="add-position-attributes">
         <xsl:with-param name="box" select="$box" />
        </xsl:call-template>    
        
@@ -212,28 +212,28 @@ License: MIT
         <xsl:choose>
           <xsl:when test="*:strong">
              <String ID="{$id}" CONTENT="{normalize-space(.)}"  WC="{$wc}" STYLE="bold">
-              <xsl:call-template name="add-posioton-attributes">
+              <xsl:call-template name="add-position-attributes">
                <xsl:with-param name="box" select="$box" />
               </xsl:call-template>
              </String>
           </xsl:when>
           <xsl:when test="*:em">
               <String ID="{$id}" CONTENT="{normalize-space(.)}" WC="{$wc}" STYLE="italics">
-               <xsl:call-template name="add-posioton-attributes">
+               <xsl:call-template name="add-position-attributes">
                 <xsl:with-param name="box" select="$box" />
                </xsl:call-template>
               </String>
           </xsl:when>
           <xsl:when test="*:i">
               <String ID="{$id}" CONTENT="{normalize-space(.)}" WC="{$wc}" STYLE="italics">
-               <xsl:call-template name="add-posioton-attributes">
+               <xsl:call-template name="add-position-attributes">
                 <xsl:with-param name="box" select="$box" />
                </xsl:call-template>
               </String>
           </xsl:when>
           <xsl:otherwise>
               <String ID="{$id}" CONTENT="{normalize-space(.)}" WC="{$wc}">
-               <xsl:call-template name="add-posioton-attributes">
+               <xsl:call-template name="add-position-attributes">
                 <xsl:with-param name="box" select="$box" />
                </xsl:call-template>
               </String>
@@ -281,7 +281,7 @@ License: MIT
 </xsl:function>
  
  
- <xsl:template name="add-posioton-attributes">
+ <xsl:template name="add-position-attributes">
   <xsl:param name="box"/>
   <xsl:attribute name="HEIGHT" select="number($box[5]) - number($box[3])" />
   <xsl:attribute name="WIDTH" select="number($box[4]) - number($box[2])" />
