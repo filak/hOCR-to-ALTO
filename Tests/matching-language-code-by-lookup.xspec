@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:description xmlns:x="http://www.jenitennison.com/xslt/xspec" stylesheet="matching-language-code-by-lookup.xsl" run-as="external"> 
+
+ <x:scenario label="When processing a list of items with different language values" >
+  <!-- apply template rules to this element -->
+  <x:context>
+   <languages>
+    <language lang="ces" />
+    <language lang="eng" />
+    <language lang="lat" />
+    <language />
+    <language lang="xyz" />
+   </languages>
+  </x:context>
+  
+  
+  <x:scenario label="and with default parameters values">
+   <!-- check the result -->
+   <x:expect label="All language elements should remain"
+    test="count(languages/language) = 5"/>
+   <x:expect label="New language code should be assigned">
+    <languages language="unknown" teslang="notset" lang-attribute-name="LANG">
+     <language LANG="cs" />
+     <language LANG="en" />
+     <language LANG="la" />
+     <language />
+     <language LANG="xyz" />
+    </languages>
+   </x:expect>
+  </x:scenario>
+
+  <x:scenario label="and with language parameter set to 'deu'">
+   <x:param name="language" select="'deu'" />
+   <!-- check the result -->
+   <x:expect label="All language elements should remain"
+    test="count(languages/language) = 5"/>
+   <x:expect label="New language code should be assigned">
+    <languages language="deu" teslang="notset" lang-attribute-name="LANG">
+     <language LANG="cs" />
+     <language LANG="en" />
+     <language LANG="la" />
+     <language LANG="de" />
+     <language LANG="xyz" />
+    </languages>
+   </x:expect>
+  </x:scenario>
+  
+  <x:scenario label="and with teslang parameter set to 'pol'">
+   <x:param name="teslang" select="'pol'" />
+   <!-- check the result -->
+   <x:expect label="All language elements should remain"
+    test="count(languages/language) = 5"/>
+   <x:expect label="New language code should be assigned">
+    <languages language="unknown" teslang="pol" lang-attribute-name="LANG">
+     <language LANG="cs" />
+     <language LANG="en" />
+     <language LANG="la" />
+     <language LANG="pl" />
+     <language LANG="xyz" />
+    </languages>
+   </x:expect>
+  </x:scenario>
+  
+ </x:scenario>
+
+</x:description>
