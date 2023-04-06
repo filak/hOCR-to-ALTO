@@ -14,7 +14,7 @@ License: MIT
  xmlns:xs="http://www.w3.org/2001/XMLSchema"
  xmlns:dlb="http://www.daliboris.cz/ns/xslt/"
  xmlns:mf="http://myfunctions"
- exclude-result-prefixes="xd xs mf a20 a21 a3 a4"
+ exclude-result-prefixes="#all"
  version="2.0">
  <xd:doc scope="stylesheet">
   <xd:desc>
@@ -73,11 +73,38 @@ License: MIT
   <xd:desc>
    <xd:p>
     <xd:b>Internal variable:</xd:b> 
-    a name of the language attribute in ALTO: <xd:i>language</xd:i> for version 2.0, <xd:i>LANG</xd:i> for version 2.1 and higher.
+    a name of the language attribute in ALTO: <xd:i>language</xd:i> for version 2.0, 
+    <xd:i>LANG</xd:i> for version 2.1 and higher.
    </xd:p>
   </xd:desc>
  </xd:doc>
  <xsl:variable name="lang-attribute-name" select="if($alto-version eq 2.0) then 'language' else 'LANG'"/>
+ 
+ <xd:doc>
+  <xd:desc>
+   <xd:p>
+    <xd:b>Internal variable:</xd:b> 
+    an URI of the namespace based on the selected ALTO version; 
+    the computed value is used for generating ALTO elements in valid namespace.
+   </xd:p>
+  </xd:desc>
+ </xd:doc>
+ <xsl:variable name="namepspace">
+  <xsl:choose>
+   <xsl:when test="$alto-version = 2.0">
+    <xsl:value-of select="'http://www.loc.gov/standards/alto/ns-v2#'"/>
+   </xsl:when>
+   <xsl:when test="$alto-version = 2.1">
+    <xsl:value-of select="'http://www.loc.gov/standards/alto/ns-v2#'"/>
+   </xsl:when>
+   <xsl:when test="$alto-version = 3.0">
+    <xsl:value-of select="'http://www.loc.gov/standards/alto/ns-v3#'"/>
+   </xsl:when>
+   <xsl:when test="$alto-version = 4.0">
+    <xsl:value-of select="'http://www.loc.gov/standards/alto/ns-v4#'"/>
+   </xsl:when>
+  </xsl:choose>
+ </xsl:variable>
  
  <xd:doc>
   <xd:desc>
@@ -91,7 +118,7 @@ License: MIT
  
  <xd:doc>
   <xd:desc>
-   <xd:p>Looking for code element with non empty <xd:i>@a2</xd:i> attribute using value of <xd:i>@a3h</xd:i> attribute.</xd:p>
+   <xd:p>Looking for <xd:b>code</xd:b> element with non empty <xd:i>@a2</xd:i> attribute using value of <xd:i>@a3h</xd:i> attribute.</xd:p>
   </xd:desc>
  </xd:doc>
  <xsl:key name="language-code" match="code[@a2!='']" use="@a3h" />
@@ -102,22 +129,22 @@ License: MIT
  <xsl:template match="/">
   <xsl:choose>
    <xsl:when test="$alto-version = 2.0">
-    <alto xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v2# https://www.loc.gov/standards/alto/v2/alto-2-0.xsd">
+    <alto xmlns="http://www.loc.gov/standards/alto/ns-v2#" xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v2# https://www.loc.gov/standards/alto/v2/alto-2-0.xsd">
      <xsl:apply-templates/>
     </alto>    
    </xsl:when>
    <xsl:when test="$alto-version = 2.1">
-    <alto xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v2# https://www.loc.gov/standards/alto/alto-2.xsd">
+    <alto xmlns="http://www.loc.gov/standards/alto/ns-v2#" xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v2# https://www.loc.gov/standards/alto/alto.xsd">
      <xsl:apply-templates/>
     </alto>
    </xsl:when>
    <xsl:when test="$alto-version = 3.0">
-    <alto xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v3# https://www.loc.gov/standards/alto/v3/alto.xsd">
+    <alto xmlns="http://www.loc.gov/standards/alto/ns-v3#" xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v3# https://www.loc.gov/standards/alto/v3/alto.xsd">
      <xsl:apply-templates/>
     </alto>   
    </xsl:when>
    <xsl:when test="$alto-version = 4.0">
-    <alto xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v4# https://www.loc.gov/standards/alto/v4/alto.xsd">
+    <alto xmlns="http://www.loc.gov/standards/alto/ns-v4#" xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v4# https://www.loc.gov/standards/alto/v4/alto.xsd">
      <xsl:apply-templates/>
     </alto>  
    </xsl:when>
@@ -125,37 +152,38 @@ License: MIT
  </xsl:template>
  
  <xd:doc>
-  <xd:desc/>
+  <xd:desc>Metadata about the source image and OCR processing.</xd:desc>
  </xd:doc>
  <xsl:template match="*:head">
-  <Description>
-   <MeasurementUnit>pixel</MeasurementUnit>
-   <sourceImageInformation>
+  <xsl:element name="Description" namespace="{$namepspace}">
+   <xsl:element name="MeasurementUnit" namespace="{$namepspace}">pixel</xsl:element>
+   <xsl:element name="sourceImageInformation" namespace="{$namepspace}">
     <xsl:variable name="title" select="//*:body/*:div[@class='ocr_page'][1]/@title"/>
-    <fileName><xsl:value-of select="mf:getFname($title)"/></fileName>
-   </sourceImageInformation>
-   <OCRProcessing ID="IdOcr">
-    <ocrProcessingStep>
-     <processingSoftware>
-      <softwareName><xsl:value-of select="*:meta[@name='ocr-system']/@content"/></softwareName>
-     </processingSoftware>
-    </ocrProcessingStep>
-   </OCRProcessing>
-  </Description>
+    <xsl:element name="fileName" namespace="{$namepspace}"><xsl:value-of select="mf:getFileName($title)"/></xsl:element>
+   </xsl:element>
+   <xsl:element name="OCRProcessing" namespace="{$namepspace}">
+    <xsl:attribute name="ID">IdOcr</xsl:attribute>
+    <xsl:element name="ocrProcessingStep" namespace="{$namepspace}">
+     <xsl:element name="processingSoftware" namespace="{$namepspace}">
+      <xsl:element name="softwareName" namespace="{$namepspace}"><xsl:value-of select="*:meta[@name='ocr-system']/@content"/></xsl:element>
+     </xsl:element>
+    </xsl:element>
+   </xsl:element>
+  </xsl:element>
  </xsl:template>
  
  
  <xd:doc>
-  <xd:desc/>
+  <xd:desc>Element for the layout of one page from the source document.</xd:desc>
  </xd:doc>
  <xsl:template match="*:body[*:div[@class='ocr_page']]">
-  <Layout>
+  <xsl:element name="Layout" namespace="{$namepspace}">
    <xsl:apply-templates select="*:div[@class='ocr_page']"/>
-  </Layout>
+  </xsl:element>
  </xsl:template>
  
  <xd:doc>
-  <xd:desc/>
+  <xd:desc>Element for one page of the source document.</xd:desc>
  </xd:doc>
  <xsl:template match="*:div[@class='ocr_page']">
   
@@ -167,27 +195,34 @@ License: MIT
   <xsl:variable name="img-nr" select="if($properties/dlb:property[@name='ppageno']) then $properties/dlb:property[@name='ppageno']/dlb:item/@value else 1"/>
   <!--  bbox 552 999 1724 1141 x1-L2-T3-R4-B5 -->
   <xsl:variable name="box" select="tokenize(mf:getBoxPage(@title), ' ')"/>
-  <Page ID="{$id}" PHYSICAL_IMG_NR="{$img-nr}" HEIGHT="{$box[5]}" WIDTH="{$box[4]}">
-   
+  <xsl:element name="Page" namespace="{$namepspace}">
+   <xsl:attribute name="ID" select="$id" />
+   <xsl:attribute name="PHYSICAL_IMG_NR" select="$img-nr" />
+   <xsl:attribute name="HEIGHT" select="$box[5]" />
+   <xsl:attribute name="WIDTH" select="$box[4]" />
    <xsl:apply-templates select="*:div[@class='ocr_header']"/>
    
-   <PrintSpace HEIGHT="{$box[5]}" WIDTH="{$box[4]}" VPOS="0" HPOS="0">
+   <xsl:element name="PrintSpace" namespace="{$namepspace}">
+    <xsl:attribute name="HEIGHT" select="$box[5]" />
+    <xsl:attribute name="WIDTH" select="$box[4]" />
+    <xsl:attribute name="VPOS" select="0" />
+    <xsl:attribute name="HPOS" select="0" />    
     <xsl:apply-templates select="*:div[@class=('ocr_carea', 'ocrx_block')] | *:p[@class=('ocr_par')]"/>
-   </PrintSpace>
+   </xsl:element>
    
    <xsl:apply-templates select="*:div[@class='ocr_footer']"/>
-  </Page>
+  </xsl:element>
  </xsl:template>
  
  <xd:doc>
-  <xd:desc/>
+  <xd:desc>Block of paragraphs elements.</xd:desc>
  </xd:doc>
  <xsl:template match="*:div[@class='ocrx_block']">
   <xsl:apply-templates select="*:p[@class='ocr_par']"/>
  </xsl:template>
  
  <xd:doc>
-  <xd:desc/>
+  <xd:desc>Header of the page.</xd:desc>
  </xd:doc>
  <xsl:template match="*:div[@class='ocr_header']">
   
@@ -197,25 +232,26 @@ License: MIT
   
   <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
   
-  <TopMargin ID="{@id}">
-   
+  <xsl:element name="TopMargin" namespace="{$namepspace}">
+   <xsl:attribute name="ID" select="@id" />
    <xsl:call-template name="add-position-attributes">
     <xsl:with-param name="box" select="$box" />
    </xsl:call-template>
    <xsl:apply-templates/>
    
-  </TopMargin>
+  </xsl:element>
   
  </xsl:template>
  
  <xd:doc>
-  <xd:desc/>
+  <xd:desc>Footer of the page.</xd:desc>
  </xd:doc>
  <xsl:template match="*:div[@class='ocr_footer']">
   <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
   <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
   
-  <BottomMargin ID="{$id}">
+  <xsl:element name="BottomMargin" namespace="{$namepspace}">
+   <xsl:attribute name="ID" select="$id" />
    
    <xsl:call-template name="add-position-attributes">
     <xsl:with-param name="box" select="$box" />
@@ -223,17 +259,18 @@ License: MIT
    
    <xsl:apply-templates/>
    
-  </BottomMargin>
+  </xsl:element>
  </xsl:template>
  
  
  <xd:doc>
-  <xd:desc/>
+  <xd:desc>Block of the recognized text.</xd:desc>
  </xd:doc>
  <xsl:template match="*:div[@class='ocr_carea']">
   <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
   <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
-  <ComposedBlock ID="{$id}">
+  <xsl:element name="ComposedBlock" namespace="{$namepspace}">
+   <xsl:attribute name="ID" select="$id" />
    
    <xsl:call-template name="add-position-attributes">
     <xsl:with-param name="box" select="$box" />
@@ -241,18 +278,18 @@ License: MIT
    
    <xsl:apply-templates/>
    
-  </ComposedBlock>
+  </xsl:element>
  </xsl:template>
  
  
  <xd:doc>
-  <xd:desc/>
+  <xd:desc>Paragraph of recognized text.</xd:desc>
  </xd:doc>
  <xsl:template match="*:p[@class='ocr_par']">
   <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
   <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
-  <TextBlock ID="{$id}">
-   
+  <xsl:element name="TextBlock" namespace="{$namepspace}">
+   <xsl:attribute name="ID" select="$id" />
    
    <xsl:call-template name="add-position-attributes">
     <xsl:with-param name="box" select="$box" />
@@ -292,16 +329,17 @@ License: MIT
    
    <xsl:apply-templates/>
    
-  </TextBlock>
+  </xsl:element>
  </xsl:template>
  
  <xd:doc>
-  <xd:desc/>
+  <xd:desc>Line of recognized text.</xd:desc>
  </xd:doc>
  <xsl:template match="*:span[@class='ocr_line']">
   <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
   <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
-  <TextLine ID="{$id}">
+  <xsl:element name="TextLine" namespace="{$namepspace}">
+   <xsl:attribute name="ID" select="$id" />
    
    
    <xsl:call-template name="add-position-attributes">
@@ -313,59 +351,55 @@ License: MIT
      <xsl:apply-templates select="*:span[@class='ocrx_word']"/>
     </xsl:when>
     <xsl:otherwise>
-     <String CONTENT="{normalize-space(.)}"/>
+     <xsl:element name="String" namespace="{$namepspace}">
+      <xsl:attribute name="CONTENT" select="normalize-space(.)" />
+     </xsl:element>
     </xsl:otherwise>
    </xsl:choose>
    
-  </TextLine>
+  </xsl:element>
  </xsl:template>
  
  
  <xd:doc>
-  <xd:desc/>
+  <xd:desc>Recognized word.</xd:desc>
  </xd:doc>
  <xsl:template match="*:span[@class='ocrx_word']">
   <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
   <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
   <xsl:variable name="wc" select="mf:getConfidence(@title)"/>
-  <xsl:choose>
-   <xsl:when test="*:strong">
-    <String ID="{$id}" CONTENT="{normalize-space(.)}"  WC="{$wc}" STYLE="bold">
-     <xsl:call-template name="add-position-attributes">
-      <xsl:with-param name="box" select="$box" />
-     </xsl:call-template>
-    </String>
-   </xsl:when>
-   <xsl:when test="*:em">
-    <String ID="{$id}" CONTENT="{normalize-space(.)}" WC="{$wc}" STYLE="italics">
-     <xsl:call-template name="add-position-attributes">
-      <xsl:with-param name="box" select="$box" />
-     </xsl:call-template>
-    </String>
-   </xsl:when>
-   <xsl:when test="*:i">
-    <String ID="{$id}" CONTENT="{normalize-space(.)}" WC="{$wc}" STYLE="italics">
-     <xsl:call-template name="add-position-attributes">
-      <xsl:with-param name="box" select="$box" />
-     </xsl:call-template>
-    </String>
-   </xsl:when>
-   <xsl:otherwise>
-    <String ID="{$id}" CONTENT="{normalize-space(.)}" WC="{$wc}">
-     <xsl:call-template name="add-position-attributes">
-      <xsl:with-param name="box" select="$box" />
-     </xsl:call-template>
-    </String>
-   </xsl:otherwise>
-  </xsl:choose>
+  
+  <xsl:element name="String" namespace="{$namepspace}">
+   <xsl:attribute name="ID" select="$id" />
+   <xsl:attribute name="CONTENT" select="normalize-space(.)" />
+   <xsl:attribute name="WC" select="$wc" />
+   <xsl:choose>
+    <xsl:when test="*:strong">
+     <xsl:attribute name="STYLE" select="'bold'" />
+    </xsl:when>
+    <xsl:when test="*:em">
+     <xsl:attribute name="STYLE" select="'italics'" />
+    </xsl:when>
+    <xsl:when test="*:i">
+     <xsl:attribute name="STYLE" select="'italics'" />
+    </xsl:when>
+   </xsl:choose>
+   
+   
+   <xsl:call-template name="add-position-attributes">
+    <xsl:with-param name="box" select="$box" />
+   </xsl:call-template>
+   
+  </xsl:element>
+
  </xsl:template>
  
  
  <xd:doc>
-  <xd:desc/>
-  <xd:param name="titleString"/>
+  <xd:desc>Extracting filename from the title attribute.</xd:desc>
+  <xd:param name="titleString">Title attribute of the element.</xd:param>
  </xd:doc>
- <xsl:function name="mf:getFname">
+ <xsl:function name="mf:getFileName">
   <xsl:param name="titleString"/>
   <xsl:variable name="pPat">"</xsl:variable>
   <xsl:variable name="fpath" select="substring-after(tokenize(normalize-space($titleString),'; ')[1],'image &quot;')"/>
@@ -374,19 +408,18 @@ License: MIT
  
  
  <xd:doc>
-  <xd:desc/>
-  <xd:param name="titleString"/>
+  <xd:desc>Extracting box values for the page from the title attribute.</xd:desc>
+  <xd:param name="titleString">Title attribute of the element.</xd:param>
  </xd:doc>
  <xsl:function name="mf:getBoxPage">
   <xsl:param name="titleString"/>
-  <!--<xsl:value-of select="tokenize(normalize-space($titleString),'; ')[2]"/>-->
   <xsl:value-of select="tokenize(normalize-space($titleString),'; ')[contains(., 'bbox')]"/>
  </xsl:function>
  
  
  <xd:doc>
-  <xd:desc/>
-  <xd:param name="titleString"/>
+  <xd:desc>Extracting box values for the recognized text block from the title attribute.</xd:desc>
+  <xd:param name="titleString">Title attribute of the element.</xd:param>
  </xd:doc>
  <xsl:function name="mf:getBox">
   <xsl:param name="titleString"/>
@@ -395,8 +428,8 @@ License: MIT
  
  
  <xd:doc>
-  <xd:desc/>
-  <xd:param name="titleString"/>
+  <xd:desc>Extracting confidence value for the recognized word from the title attribute.</xd:desc>
+  <xd:param name="titleString">Title attribute of the element.</xd:param>
  </xd:doc>
  <xsl:function name="mf:getConfidence">
   <xsl:param name="titleString"/>
@@ -416,8 +449,8 @@ License: MIT
  
  
  <xd:doc>
-  <xd:desc/>
-  <xd:param name="box"/>
+  <xd:desc>Geenrating attributes HEIGHT, WIDTH, VPOS, and HPOS with computed values.</xd:desc>
+  <xd:param name="box">Extracted values of the text block from the title attribute of the element. See <xd:ref name="mf:getBox">mf:getBox</xd:ref> function.</xd:param>
  </xd:doc>
  <xsl:template name="add-position-attributes">
   <xsl:param name="box"/>
@@ -428,7 +461,18 @@ License: MIT
  </xsl:template>
  
  <xd:doc>
-  <xd:desc/>
+  <xd:desc>
+   <xd:p>Converting hOCR properties from the title attribute to XML format.</xd:p>
+   <xd:p>Example of the <xd:i>bbox</xd:i> property with values <xd:i>222 130 1183 174</xd:i>:</xd:p>
+   <xd:pre>
+    <dlb:property name="bbox">
+     <dlb:item value="222">left</dlb:item>
+     <dlb:item value="130">top</dlb:item>
+     <dlb:item value="1183">right</dlb:item>
+     <dlb:item value="174">bottom</dlb:item>
+    </dlb:property>
+   </xd:pre>
+  </xd:desc>
  </xd:doc>
  <xsl:template name="get-hocr-properties">
   <xsl:variable name="title" select="@title"/>
@@ -449,9 +493,16 @@ License: MIT
  </xsl:template>
  
  <xd:doc>
-  <xd:desc/>
-  <xd:param name="property"/>
-  <xd:param name="position"/>
+  <xd:desc>
+   <xd:p>Name of the value based on the property name and position of the value in the string.</xd:p>
+   <xd:p>If property is not recognized, an empty string is returned.</xd:p>
+   <xd:p>Recognized properties and names:</xd:p>
+   <xd:ul>
+    <xd:li>bbox: left, top, right, bottom</xd:li>
+   </xd:ul>
+  </xd:desc>
+  <xd:param name="property">Name of the property in hOCR.</xd:param>
+  <xd:param name="position">Position of the value within values of the property separated by space.</xd:param>
  </xd:doc>
  <xsl:template name="get-value-name">
   <xsl:param name="property"/>
