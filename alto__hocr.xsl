@@ -2,6 +2,8 @@
 <!--
 Author:  Filip Kriz (@filak)
 License: MIT
+Changes:
+- add recursion to the *:ComposedBlock template - apply-templates select="*:TextBlock|*:ComposedBlock"
 -->
 <xsl:stylesheet version="2.0"
     xmlns="http://www.w3.org/1999/xhtml"
@@ -101,7 +103,7 @@ License: MIT
   
   <xsl:template match="*:ComposedBlock">
     <div class="ocr_carea" id="{mf:getId(@ID,'block',.)}" title="{mf:getBox(@HEIGHT,@WIDTH,@VPOS,@HPOS,@WC)}">
-         <xsl:apply-templates select="*:TextBlock"/>
+         <xsl:apply-templates select="*:TextBlock|*:ComposedBlock"/>
      </div>
   </xsl:template>
 
