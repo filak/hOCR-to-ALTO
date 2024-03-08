@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "Please cite this software using these metadata."
+abstract: "Convert between Tesseract hOCR and ALTO XML using XSL stylesheets"  
+authors:
+- family-names: "Kriz"
+  given-names: "Filip"
+  url: "https://www.medvik.cz/link/xx0060106"
+title: "hOCR-to-ALTO"
+license: "MIT"
+repository-code: "https://github.com/filak/hOCR-to-ALTO"
+
