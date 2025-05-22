@@ -12,9 +12,12 @@ Running the conversion using Saxon-HE command line - example converting ALTO to 
 
         java -jar "saxon/saxon-he-12.7.jar" -s:input-alto.xml -xsl:alto__hocr.xsl -o:output-hocr.xml
 
-Or use the **run-saxon** script from bash:
+   Or use the **run-saxon** script from bash:
 
-     $ /.run-saxon input-alto.xml alto__hocr.xsl output-hocr.xml
+       $ /.run-saxon input-alto.xml alto__hocr.xsl output-hocr.xml
+
+ 4. Check the **_output** dir. 
+
 
 See [ocr-fileformat](https://github.com/UB-Mannheim/ocr-fileformat) for an
 interface to using these stylesheets.
