@@ -31,6 +31,7 @@ File naming scheme:   sourceFormatVersion__targetFormatVersion.xsl
   * Convert ALTO to hOCR
     * [`alto__hocr.xsl`](./alto__hocr.xsl) 
   * Convert hOCR to ALTO
+    * [`hocr__alto.xsl`](./hocr__alto.xsl)
     * [`hocr__alto4.xsl`](./hocr__alto4.xsl)
     * [`hocr__alto3.xsl`](./hocr__alto3.xsl)
     * [`hocr__alto2.1.xsl`](./hocr__alto2.1.xsl)     
