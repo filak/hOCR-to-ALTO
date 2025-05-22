@@ -6,9 +6,11 @@ capable transformer is required** - ie. [Saxon](https://www.saxonica.com/downloa
 
 Running the conversion using Saxon-HE command line - example converting ALTO to hOCR:
 
-> Do not forget to copy the "lib" dir from the Saxon distribution
+1. Unpack the Saxon distribution into the **saxon** subdir
+2. Place your input file(s) into the **_input** subdir
+3. Run:
 
-     java -cp "saxon-he-12.7.jar;lib/*" net.sf.saxon.Transform -s:input-alto.xml -xsl:alto__hocr.xsl -o:output-hocr.xml
+        java -jar "saxon/saxon-he-12.7.jar" -s:input-alto.xml -xsl:alto__hocr.xsl -o:output-hocr.xml
 
 See [ocr-fileformat](https://github.com/UB-Mannheim/ocr-fileformat) for an
 interface to using these stylesheets.
