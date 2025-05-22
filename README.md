@@ -10,7 +10,7 @@ Running the conversion using Saxon-HE command line - example converting ALTO to 
 2. Place your input file(s) into the **_input** subdir
 3. Run:
 
-        java -jar "saxon/saxon-he-12.7.jar" -s:input-alto.xml -xsl:alto__hocr.xsl -o:output-hocr.xml
+        java -jar "saxon/saxon-he-12.7.jar" -s:_input/input-alto.xml -xsl:alto__hocr.xsl -o:_output/output-hocr.xml
 
    Or use the **run-saxon** script from bash:
 
