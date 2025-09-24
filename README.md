@@ -2,7 +2,7 @@
 Convert between Tesseract hOCR and [ALTO XML](https://www.loc.gov/standards/alto/) 2.0/2.1/3/4 using XSL stylesheets
 
 > The XSLT scripts use XSLT 2.0 features - so a **XSLT 2.0
-capable transformer is required** - ie. [Saxon](https://www.saxonica.com/download/java.xml)
+capable transformer is required** - ie. [Saxon-HE](https://github.com/Saxonica/Saxon-HE/releases)
 
 Running the conversion using Saxon-HE command line - example converting ALTO to hOCR:
 
