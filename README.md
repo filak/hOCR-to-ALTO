@@ -5,8 +5,8 @@ Convert between Tesseract hOCR and [ALTO XML](https://www.loc.gov/standards/alto
 capable transformer is required** - ie. [Saxon-HE](https://github.com/Saxonica/Saxon-HE/releases)
 
 Running the conversion using Saxon-HE command line - example converting ALTO to hOCR:
-
-1. Unpack the Saxon distribution into the **saxon** subdir OR set SAXON_JAR system variable to your Saxon jar file
+ 
+1. Unpack the Saxon distribution into the **saxon** subdir OR set the **SAXON_JAR** system var with path to your Saxon *.jar
 2. Place your input file(s) into the **_input** subdir
 3. Run transformation directly:
 
