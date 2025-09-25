@@ -23,6 +23,17 @@ OUTPUT_FILE="$SCRIPT_DIR/_output/$OUTPUT"
 # Ensure _output folder exists
 mkdir -p "$SCRIPT_DIR/_output"
 
+# Use provided SAXON_JAR or default
+if [ -z "$SAXON_JAR" ]; then
+  SAXON_JAR="$SAXON_DIR/saxon-he-12.9.jar"
+fi
+
+# Verify that the JAR file exists
+if [ ! -f "$SAXON_JAR" ]; then
+  echo "Error: Saxon JAR not found at $SAXON_JAR"
+  exit 1
+fi
+
 # Run Saxon
-java -jar "$SAXON_DIR/saxon-he-12.7.jar" \
+java -jar "$SAXON_JAR" \
   -s:"$INPUT_FILE" -xsl:"$XSL_FILE" -o:"$OUTPUT_FILE"
