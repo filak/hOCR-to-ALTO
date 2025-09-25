@@ -7,8 +7,8 @@ capable transformer is required** - ie. [Saxon-HE](https://github.com/Saxonica/S
 Running the conversion using Saxon-HE command line - example converting ALTO to hOCR:
  
 1. Unpack the Saxon distribution into the **saxon** subdir OR set the **SAXON_JAR** sysvar with path to your Saxon *.jar
-3. Place your input file(s) into the **_input** subdir
-4. Run transformation directly:
+2. Place your input file(s) into the **_input** subdir
+3. Run the transformation directly:
 
         java -jar "saxon/saxon-he-12.9.jar" -s:_input/input-alto.xml -xsl:alto__hocr.xsl -o:_output/output-hocr.xml
 
@@ -18,7 +18,7 @@ Running the conversion using Saxon-HE command line - example converting ALTO to 
 
        BASH$ /.run-saxon input-alto.xml alto__hocr.xsl output-hocr.xml
 
- 5. Check the **_output** dir. 
+ 4. Check the **_output** dir. 
 
 
 See [ocr-fileformat](https://github.com/UB-Mannheim/ocr-fileformat) for an
