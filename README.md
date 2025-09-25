@@ -1,5 +1,5 @@
 # hOCR-to-ALTO
-Convert between Tesseract hOCR and [ALTO XML](https://www.loc.gov/standards/alto/) 2.0/2.1/3/4 using XSL stylesheets
+Convert between Tesseract [hOCR](https://github.com/kba/hocr-spec) and [ALTO XML](https://www.loc.gov/standards/alto/) 2.0/2.1/3/4 using XSL stylesheets
 
 > The XSLT scripts use XSLT 2.0 features - so a **XSLT 2.0
 capable transformer is required** - ie. [Saxon-HE](https://github.com/Saxonica/Saxon-HE/releases)
@@ -24,9 +24,11 @@ Running the conversion using Saxon-HE command line - example converting ALTO to 
 See [ocr-fileformat](https://github.com/UB-Mannheim/ocr-fileformat) for an
 interface to using these stylesheets.
 
-hOCR-spec https://github.com/kba/hocr-spec
+hOCR-spec: https://github.com/kba/hocr-spec
 
-File naming scheme:   sourceFormatVersion__targetFormatVersion.xsl
+File naming scheme:   
+
+     sourceFormatVersion__targetFormatVersion.xsl
 
 ## CONTENTS
 
