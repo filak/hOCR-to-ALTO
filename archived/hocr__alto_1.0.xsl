@@ -2,10 +2,6 @@
 <!--
 Author:  Filip Kriz (@filak), Boris Lehečka (@daliboris)
 License: MIT
-Version: 1.1 2025-09-24
-Changes:
-Version 1.1
-- Added support for Kraken hocr specialties
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:a20="http://www.loc.gov/standards/alto/ns-v2#"
@@ -28,7 +24,7 @@ Version 1.1
   </xd:desc>
  </xd:doc>
  
- <xsl:output method="xml" encoding="utf-8" indent="yes"/>
+ <xsl:output method="xml" encoding="utf-8" indent="yes" />
  <xsl:strip-space elements="*"/>
 
  <xd:doc>
@@ -51,7 +47,7 @@ Version 1.1
   </xd:desc>
  </xd:doc>
  
- <xsl:param name="alto-version" select="4.0" as="xs:double"/>
+ <xsl:param name="alto-version" select="4.0" as="xs:double" />
  
  <xd:doc>
   <xd:desc>
@@ -61,7 +57,7 @@ Version 1.1
    </xd:p>
   </xd:desc>
  </xd:doc>
- <xsl:param name="language" select="'unknown'" as="xs:string"/>
+ <xsl:param name="language" select="'unknown'" as="xs:string" />
 
  <xd:doc>
   <xd:desc>
@@ -71,7 +67,7 @@ Version 1.1
    </xd:p>
   </xd:desc>
  </xd:doc>
- <xsl:param name="teslang" select="'notset'"  as="xs:string"/>
+ <xsl:param name="teslang" select="'notset'"  as="xs:string" />
  
  <xd:doc>
   <xd:desc>
@@ -125,7 +121,7 @@ Version 1.1
    <xd:p>Looking for <xd:b>code</xd:b> element with non empty <xd:i>@a2</xd:i> attribute using value of <xd:i>@a3h</xd:i> attribute.</xd:p>
   </xd:desc>
  </xd:doc>
- <xsl:key name="language-code" match="code[@a2!='']" use="@a3h"/>
+ <xsl:key name="language-code" match="code[@a2!='']" use="@a3h" />
  
  <xd:doc>
   <xd:desc/>
@@ -192,7 +188,7 @@ Version 1.1
  <xsl:template match="*:div[@class='ocr_page']">
   
   <xsl:variable name="properties">
-   <xsl:call-template name="get-hocr-properties"/>
+   <xsl:call-template name="get-hocr-properties" />
   </xsl:variable>
   
   <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
@@ -200,17 +196,17 @@ Version 1.1
   <!--  bbox 552 999 1724 1141 x1-L2-T3-R4-B5 -->
   <xsl:variable name="box" select="tokenize(mf:getBoxPage(@title), ' ')"/>
   <xsl:element name="Page" namespace="{$namepspace}">
-   <xsl:attribute name="ID" select="$id"/>
-   <xsl:attribute name="PHYSICAL_IMG_NR" select="$img-nr"/>
-   <xsl:attribute name="HEIGHT" select="$box[5]"/>
-   <xsl:attribute name="WIDTH" select="$box[4]"/>
+   <xsl:attribute name="ID" select="$id" />
+   <xsl:attribute name="PHYSICAL_IMG_NR" select="$img-nr" />
+   <xsl:attribute name="HEIGHT" select="$box[5]" />
+   <xsl:attribute name="WIDTH" select="$box[4]" />
    <xsl:apply-templates select="*:div[@class='ocr_header']"/>
    
    <xsl:element name="PrintSpace" namespace="{$namepspace}">
-    <xsl:attribute name="HEIGHT" select="$box[5]"/>
-    <xsl:attribute name="WIDTH" select="$box[4]"/>
-    <xsl:attribute name="VPOS" select="0"/>
-    <xsl:attribute name="HPOS" select="0"/>    
+    <xsl:attribute name="HEIGHT" select="$box[5]" />
+    <xsl:attribute name="WIDTH" select="$box[4]" />
+    <xsl:attribute name="VPOS" select="0" />
+    <xsl:attribute name="HPOS" select="0" />    
     <xsl:apply-templates select="*:div[@class=('ocr_carea', 'ocrx_block')] | *:p[@class=('ocr_par')]"/>
    </xsl:element>
    
@@ -222,8 +218,7 @@ Version 1.1
   <xd:desc>Block of paragraphs elements.</xd:desc>
  </xd:doc>
  <xsl:template match="*:div[@class='ocrx_block']">
-   <xsl:apply-templates select="*:p[@class='ocr_par']"/>
-   <xsl:apply-templates select="*:span[@class='ocr_line']"/>
+  <xsl:apply-templates select="*:p[@class='ocr_par']"/>
  </xsl:template>
  
  <xd:doc>
@@ -232,15 +227,15 @@ Version 1.1
  <xsl:template match="*:div[@class='ocr_header']">
   
   <xsl:variable name="properties">
-   <xsl:call-template name="get-hocr-properties"/>
+   <xsl:call-template name="get-hocr-properties" />
   </xsl:variable>
   
   <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
   
   <xsl:element name="TopMargin" namespace="{$namepspace}">
-   <xsl:attribute name="ID" select="@id"/>
+   <xsl:attribute name="ID" select="@id" />
    <xsl:call-template name="add-position-attributes">
-    <xsl:with-param name="box" select="$box"/>
+    <xsl:with-param name="box" select="$box" />
    </xsl:call-template>
    <xsl:apply-templates/>
    
@@ -256,10 +251,10 @@ Version 1.1
   <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
   
   <xsl:element name="BottomMargin" namespace="{$namepspace}">
-   <xsl:attribute name="ID" select="$id"/>
+   <xsl:attribute name="ID" select="$id" />
    
    <xsl:call-template name="add-position-attributes">
-    <xsl:with-param name="box" select="$box"/>
+    <xsl:with-param name="box" select="$box" />
    </xsl:call-template>    
    
    <xsl:apply-templates/>
@@ -271,20 +266,20 @@ Version 1.1
  <xd:doc>
   <xd:desc>Block of the recognized text.</xd:desc>
  </xd:doc>
-  <xsl:template match="*:div[@class='ocr_carea']">
-    <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
-    <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
-    <xsl:element name="ComposedBlock" namespace="{$namepspace}">
-      <xsl:attribute name="ID" select="$id"/>
-
-      <xsl:call-template name="add-position-attributes">
-        <xsl:with-param name="box" select="$box"/>
-      </xsl:call-template>
-
-      <xsl:apply-templates/>
-
-    </xsl:element>
-  </xsl:template>
+ <xsl:template match="*:div[@class='ocr_carea']">
+  <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
+  <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
+  <xsl:element name="ComposedBlock" namespace="{$namepspace}">
+   <xsl:attribute name="ID" select="$id" />
+   
+   <xsl:call-template name="add-position-attributes">
+    <xsl:with-param name="box" select="$box" />
+   </xsl:call-template>
+   
+   <xsl:apply-templates/>
+   
+  </xsl:element>
+ </xsl:template>
  
  
  <xd:doc>
@@ -294,10 +289,10 @@ Version 1.1
   <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
   <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
   <xsl:element name="TextBlock" namespace="{$namepspace}">
-   <xsl:attribute name="ID" select="$id"/>
+   <xsl:attribute name="ID" select="$id" />
    
    <xsl:call-template name="add-position-attributes">
-    <xsl:with-param name="box" select="$box"/>
+    <xsl:with-param name="box" select="$box" />
    </xsl:call-template>    
    
    <!-- 
@@ -329,7 +324,7 @@ Version 1.1
    <!-- if value for language exists, attribute value is set -->
    <xsl:if test="$language-value">
     <!-- creating attribute with name reflecting ALTO version (@language for version 2, @LANG for higher versions) -->
-    <xsl:attribute name="{$lang-attribute-name}" select="$language-value"/>
+    <xsl:attribute name="{$lang-attribute-name}" select="$language-value" />
    </xsl:if>
    
    <xsl:apply-templates/>
@@ -344,11 +339,11 @@ Version 1.1
   <xsl:variable name="id" select="if (@id) then @id else generate-id()"/>
   <xsl:variable name="box" select="tokenize(mf:getBox(@title), ' ')"/>
   <xsl:element name="TextLine" namespace="{$namepspace}">
-   <xsl:attribute name="ID" select="$id"/>
+   <xsl:attribute name="ID" select="$id" />
    
    
    <xsl:call-template name="add-position-attributes">
-    <xsl:with-param name="box" select="$box"/>
+    <xsl:with-param name="box" select="$box" />
    </xsl:call-template>    
    
    <xsl:choose>
@@ -357,7 +352,7 @@ Version 1.1
     </xsl:when>
     <xsl:otherwise>
      <xsl:element name="String" namespace="{$namepspace}">
-      <xsl:attribute name="CONTENT" select="normalize-space(.)"/>
+      <xsl:attribute name="CONTENT" select="normalize-space(.)" />
      </xsl:element>
     </xsl:otherwise>
    </xsl:choose>
@@ -375,26 +370,28 @@ Version 1.1
   <xsl:variable name="wc" select="mf:getConfidence(@title)"/>
   
   <xsl:element name="String" namespace="{$namepspace}">
-   <xsl:attribute name="ID" select="$id"/>
-   <xsl:attribute name="CONTENT" select="normalize-space(.)"/>
-   <xsl:attribute name="WC" select="$wc"/>
+   <xsl:attribute name="ID" select="$id" />
+   <xsl:attribute name="CONTENT" select="normalize-space(.)" />
+   <xsl:attribute name="WC" select="$wc" />
    <xsl:choose>
     <xsl:when test="*:strong">
-     <xsl:attribute name="STYLE" select="'bold'"/>
+     <xsl:attribute name="STYLE" select="'bold'" />
     </xsl:when>
     <xsl:when test="*:em">
-     <xsl:attribute name="STYLE" select="'italics'"/>
+     <xsl:attribute name="STYLE" select="'italics'" />
     </xsl:when>
     <xsl:when test="*:i">
-     <xsl:attribute name="STYLE" select="'italics'"/>
+     <xsl:attribute name="STYLE" select="'italics'" />
     </xsl:when>
    </xsl:choose>
    
+   
    <xsl:call-template name="add-position-attributes">
-    <xsl:with-param name="box" select="$box"/>
+    <xsl:with-param name="box" select="$box" />
    </xsl:call-template>
    
   </xsl:element>
+
  </xsl:template>
  
  
@@ -434,22 +431,22 @@ Version 1.1
   <xd:desc>Extracting confidence value for the recognized word from the title attribute.</xd:desc>
   <xd:param name="titleString">Title attribute of the element.</xd:param>
  </xd:doc>
-  <xsl:function name="mf:getConfidence">
-    <xsl:param name="titleString"/>
-    <xsl:variable name="wconfString" select="tokenize(normalize-space($titleString),'; ')[2]"/>
-
-    <xsl:choose>
-      <xsl:when test="$wconfString != ''">
-        <xsl:variable name="numbersOnly" select="replace(replace($wconfString, 'x_wconf ', ''), 'x_confs ', '')"/>
-        <xsl:variable name="firstNumber" select="tokenize($numbersOnly, ' ')[1]"/>
-        <xsl:variable name="wcFloat" select="xs:float($firstNumber)"/>
-        <xsl:value-of select="if ($wcFloat > 1) then $wcFloat div 100 else $wcFloat"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="0"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:function>
+ <xsl:function name="mf:getConfidence">
+  <xsl:param name="titleString"/>
+  <xsl:variable name="wconfString" select="tokenize(normalize-space($titleString),'; ')[2]" />
+  
+  <xsl:choose>
+   <xsl:when test="$wconfString != ''">
+    <xsl:variable name="wconf" as="xs:float" select="replace($wconfString, 'x_wconf ','') cast as xs:float"/>
+    <xsl:value-of select="$wconf div 100"></xsl:value-of>
+   </xsl:when>
+   <xsl:otherwise>
+    <xsl:value-of select="0"></xsl:value-of>
+   </xsl:otherwise>
+  </xsl:choose>
+  
+ </xsl:function>
+ 
  
  <xd:doc>
   <xd:desc>Geenrating attributes HEIGHT, WIDTH, VPOS, and HPOS with computed values.</xd:desc>
@@ -457,10 +454,10 @@ Version 1.1
  </xd:doc>
  <xsl:template name="add-position-attributes">
   <xsl:param name="box"/>
-  <xsl:attribute name="HEIGHT" select="number($box[5]) - number($box[3])"/>
-  <xsl:attribute name="WIDTH" select="number($box[4]) - number($box[2])"/>
-  <xsl:attribute name="VPOS" select="$box[3]"/>
-  <xsl:attribute name="HPOS" select="$box[2]"/>
+  <xsl:attribute name="HEIGHT" select="number($box[5]) - number($box[3])" />
+  <xsl:attribute name="WIDTH" select="number($box[4]) - number($box[2])" />
+  <xsl:attribute name="VPOS" select="$box[3]" />
+  <xsl:attribute name="HPOS" select="$box[2]" />
  </xsl:template>
  
  <xd:doc>
@@ -486,8 +483,8 @@ Version 1.1
     <xsl:for-each select="$properties[position() > 1]">
      <dlb:item value="{.}">
       <xsl:call-template name="get-value-name">
-       <xsl:with-param name="property" select="$properties[1]"/>
-       <xsl:with-param name="position" select="position()"/>
+       <xsl:with-param name="property" select="$properties[1]" />
+       <xsl:with-param name="position" select="position()" />
       </xsl:call-template>      
      </dlb:item>
     </xsl:for-each>
@@ -528,5 +525,5 @@ Version 1.1
    </xsl:attribute>
   </xsl:if>
  </xsl:template>
-
+ 
 </xsl:stylesheet>
