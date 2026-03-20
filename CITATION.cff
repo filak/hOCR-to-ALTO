@@ -4,7 +4,7 @@ abstract: "Convert between Tesseract hOCR and ALTO XML using XSL stylesheets"
 authors:
 - family-names: "Kriz"
   given-names: "Filip"
-  url: "https://www.medvik.cz/link/xx0060106"
+  url: "https://medvik.cz/link/xx0060106"
 - family-names: "Baierer"
   given-names: "Konstantin"
 - family-names: "Zumstein"
